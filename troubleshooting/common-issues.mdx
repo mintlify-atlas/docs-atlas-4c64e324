@@ -1,0 +1,89 @@
+---
+title: "Common Issues and Fixes for ByeTunes Users"
+description: "Solutions to the most frequent problems with ByeTunes, including injection failures, connection errors, missing songs, and artwork issues."
+---
+
+If something is not working as expected, most problems fall into a small number of categories. Work through the issue that matches your situation below. If none of these resolve your problem, [collect debug logs](/troubleshooting/debug-logs) and report the issue.
+
+<AccordionGroup>
+  <Accordion title="App stuck on white or black screen">
+    This happens when the iOS media library gets into an inconsistent state. ByeTunes cannot recover from this on its own.
+
+    **Fix:** Restart your iPhone. A full restart forces iOS to reload the media library from scratch, which clears the stuck state. After rebooting, reopen ByeTunes and try your injection again.
+  </Accordion>
+
+  <Accordion title="Songs not showing in Apple Music after injection">
+    If injection appeared to complete but the songs do not appear in Apple Music, the import likely failed partway through.
+
+    **Fix:** Restart ByeTunes and try injecting again. Also make sure the Music app is fully closed before you start an injection — if Music is open and holding the database, ByeTunes cannot write to it cleanly.
+
+    <Note>
+      ByeTunes kills the Music app automatically before injection when the **Kill Music Before Inject** setting is enabled (default: on). If you have disabled this setting, close Music manually before injecting.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Injection fails immediately">
+    An immediate failure usually means ByeTunes cannot reach your device at all.
+
+    Check the following in order:
+
+    1. **VPN is connected** — Open LocalDevVPN or StosVPN and confirm the connection is active. ByeTunes cannot communicate with your device without a local tunnel.
+    2. **Pairing file is valid** — Go to **Settings > Connection** and check that a pairing file is listed. If the status shows an error, tap the pairing file row and re-import it.
+    3. **iOS version match** — If you are on iOS 26.4 or later, you need an **RP Pairing File**, not a regular pairing file. See the [RP Pairing setup guide](/setup/ios264-rp-pairing) for instructions.
+    4. **Reconnect** — Tap **Refresh** next to the connection status in Settings to force a reconnect.
+  </Accordion>
+
+  <Accordion title="Some songs are skipped during batch injection">
+    Songs with **Unknown** as both the title and artist are skipped automatically during batch operations. This is intentional — injecting unknown tracks in bulk can cause artwork to be assigned to the wrong songs.
+
+    **Fix:** Inject the skipped songs individually. Before injecting, use the metadata editor to fill in the correct title and artist so the track is no longer flagged as unknown.
+  </Accordion>
+
+  <Accordion title="Artwork disappeared after injection">
+    Apple Music caches artwork aggressively. After an injection, the cache can get out of sync and display blank or incorrect artwork.
+
+    **Fix:** Force-quit the Music app and reopen it. This clears the artwork cache and prompts Music to reload artwork from the database.
+  </Accordion>
+
+  <Accordion title="Connection shows Disconnected or Connection Failed">
+    The heartbeat between ByeTunes and your device has dropped or never established.
+
+    **Fix:**
+
+    1. Open LocalDevVPN or StosVPN and confirm the VPN is running.
+    2. In ByeTunes, go to **Settings** and tap **Refresh** next to the connection status.
+    3. If the status still does not update, force-quit ByeTunes and reopen it. The app will attempt to reconnect on launch.
+
+    <Warning>
+      If you connected the VPN after opening ByeTunes, the app will not detect it automatically. Always start the VPN first, then open ByeTunes.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Injection is slow on iOS 26.4 or later">
+    Slower injection on iOS 26.4+ is expected and not a bug. Apple now requires the RP Pairing method on these versions, which routes traffic through a heavier tunnel and RSD layer compared to the older lockdown pairing method.
+
+    ByeTunes reuses the AFC connection across all uploads in a single injection batch to reduce round trips, but the underlying tunnel is still slower by nature.
+
+    <Tip>
+      For large libraries, inject in smaller batches to reduce the total time per session and make it easier to spot any failed songs.
+    </Tip>
+  </Accordion>
+
+  <Accordion title="Wrong pairing file imported">
+    ByeTunes validates pairing files on import and rejects files that do not match the expected format. If you are on iOS 26.4+, a regular pairing file will be rejected — you need an RP Pairing File.
+
+    **Fix:** Delete the invalid file from the Settings pairing file row, then import the correct file. See [Pairing File setup](/setup/pairing-file) or [RP Pairing setup](/setup/ios264-rp-pairing) depending on your iOS version.
+  </Accordion>
+
+  <Accordion title="Artwork shows a gray background on iOS 26.4">
+    iOS 26.4 changed how Apple Music displays artwork and background colors. Songs injected before you updated to iOS 26.4 may show artwork in some places but still display a gray background in the newer Apple Music views.
+
+    **Fix:** Open **Settings** and tap **Fix Artwork** under the **iOS 26.4+** section. This will re-fetch artwork color data from Apple Music for your existing injected songs. An internet connection is required.
+
+    For more stubborn cases, tap **Advanced Artwork & Metadata Fix** in the same section for a deeper repair pass. See the [Artwork Repair guide](/settings/artwork-repair) for details.
+
+    <Note>
+      The **Fix Artwork** and **Advanced Artwork & Metadata Fix** buttons are only visible on iOS 26.4 and later.
+    </Note>
+  </Accordion>
+</AccordionGroup>

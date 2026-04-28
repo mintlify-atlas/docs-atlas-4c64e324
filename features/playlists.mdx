@@ -1,0 +1,72 @@
+---
+title: "Organize Injected Songs into Apple Music Playlists"
+description: "Create and populate Apple Music playlists during song injection with ByeTunes. Existing playlists matched by name have new songs appended automatically."
+---
+
+When you inject songs with ByeTunes, you can optionally assign them to a named playlist in one step. The playlist is created directly in the Apple Music library database during injection, so it appears natively in the Music app as soon as the injection finishes — no manual sorting required.
+
+## How playlists work in ByeTunes
+
+ByeTunes stores playlists as container records inside `MediaLibrary.sqlitedb`, the same database Apple Music reads on-device. When you provide a playlist name, `createPlaylist()` in `MediaLibraryBuilder` inserts a new container and links each injected song's persistent ID (`item_pid`) to it. If a playlist with the same name already exists in the database, ByeTunes adds the new songs to that existing container rather than creating a duplicate.
+
+<Note>
+Playlist matching is case-sensitive and based on exact name. If you want to add to an existing playlist, type the name exactly as it appears in Apple Music.
+</Note>
+
+## Creating a playlist during injection
+
+<Steps>
+  <Step title="Add songs to the queue">
+    Open ByeTunes and tap the **Music** tab. Tap **Add Songs** and select the audio files you want to inject.
+  </Step>
+
+  <Step title="Tap Inject as Playlist">
+    Instead of tapping **Inject to Device**, tap the **Inject as Playlist** button. ByeTunes first fetches your existing playlists from the device and opens a **Select Playlist** sheet.
+  </Step>
+
+  <Step title="Choose or create a playlist">
+    In the sheet, you can either:
+
+    - Tap **Create New Playlist** to enter a name for a brand-new playlist. A dialog prompts you for the playlist name.
+    - Tap an existing playlist from the list to add the songs to it.
+
+    ByeTunes closes the sheet and begins injection immediately after your selection.
+  </Step>
+
+  <Step title="Open Apple Music">
+    On your iPhone, open the Music app and navigate to **Library > Playlists**. The playlist appears with all the songs you injected. If Apple Music was open during injection, you may need to restart it to refresh the library view.
+  </Step>
+</Steps>
+
+## Adding to an existing playlist
+
+When you tap **Inject as Playlist** and select an existing playlist from the sheet, ByeTunes appends the new songs to that playlist's container in the database. The existing songs in the playlist are not affected.
+
+<Tip>
+Use the same playlist across multiple injection sessions to build it up incrementally — for example, injecting an album a few tracks at a time by selecting the same playlist each time.
+</Tip>
+
+## Notes on playlist behavior
+
+- Playlists created by ByeTunes are standard Apple Music playlists. You can rename, reorder, and delete them directly in the Music app.
+- Deleting a playlist in Apple Music does not remove the songs from your library — only the playlist container is deleted.
+- If you delete your entire music library using **Settings > Danger Zone > Delete Music Library**, all playlists are removed along with the database.
+
+<Warning>
+Always create a backup before making large changes to your library. See [Backup & Restore](/settings/backup-restore) for instructions.
+</Warning>
+
+<CardGroup cols={2}>
+  <Card title="Music Injection" href="/features/music-injection">
+    Learn how to inject audio files into your Apple Music library.
+  </Card>
+  <Card title="Backup & Restore" href="/settings/backup-restore">
+    Protect your library before injecting large batches of songs.
+  </Card>
+  <Card title="Metadata" href="/features/metadata">
+    Control how song metadata is matched and enriched during injection.
+  </Card>
+  <Card title="Download" href="/features/download">
+    Download songs directly from ByeTunes and inject them in one step.
+  </Card>
+</CardGroup>

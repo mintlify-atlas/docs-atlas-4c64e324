@@ -1,0 +1,90 @@
+---
+title: "Install Custom Ringtones on iPhone with ByeTunes"
+description: "How to add M4R ringtone files to your iPhone using ByeTunes, including file format requirements and where ringtones appear after injection."
+---
+
+The Ringtones tab in ByeTunes lets you install custom ringtones directly onto your iPhone without iTunes. Ringtones are written to `/iTunes_Control/Ringtones/` on the device and tracked in `Ringtones.plist`. After injection, ByeTunes posts a set of sync notifications via the notification proxy (`postRingtoneRefreshNotifications()`), which prompts the system to recognize the new ringtone. The ringtone then becomes selectable in **Settings > Sounds & Haptics** on your iPhone.
+
+<Warning>
+The Ringtones tab is currently partially disabled due to instability. The UI shows a "Ringtones Injection Disabled" message. Ringtone injection via the **Share** sheet (sharing an M4R directly from another app to ByeTunes) still works as an auto-inject path when your device is connected. Full Ringtones tab support will return in a future update.
+</Warning>
+
+## Supported formats
+
+| Format | Status |
+|--------|--------|
+| M4R | Supported |
+| MP3 | Currently disabled — use M4R |
+
+Only M4R files are accepted for ringtone injection at this time. MP3 ringtone support is listed in the app's format info but is currently disabled. Convert your audio to M4R before using ByeTunes.
+
+<Note>
+Standard iOS ringtones are typically 30 seconds or shorter. Prepare your M4R file to the correct length before importing — ByeTunes does not trim audio during injection.
+</Note>
+
+## Injecting a ringtone via the Share sheet
+
+The most reliable way to install a ringtone with the current build is to share an M4R file directly to ByeTunes from another app.
+
+<Steps>
+  <Step title="Ensure your device is connected">
+    Open ByeTunes and confirm the connection status shows **Connected** in the top bar. If not, go to **Settings** and tap **Refresh** next to the status indicator.
+  </Step>
+
+  <Step title="Locate your M4R file">
+    Open the **Files** app (or any app that holds your M4R file) and find the ringtone you want to install.
+  </Step>
+
+  <Step title="Share to ByeTunes">
+    Tap the share icon on the file and select **ByeTunes** from the share sheet. ByeTunes receives the file and, because the device is connected, automatically begins injection.
+  </Step>
+
+  <Step title="Wait for injection to complete">
+    ByeTunes uploads the ringtone to the device and triggers a sync notification. The status bar in the app updates to confirm success.
+  </Step>
+
+  <Step title="Select the ringtone on your iPhone">
+    On your iPhone, go to **Settings > Sounds & Haptics > Ringtone**. Your new ringtone appears at the top of the list under **Ringtones**.
+  </Step>
+</Steps>
+
+## Adding a ringtone via the Ringtones tab (when enabled)
+
+When the Ringtones tab is re-enabled in a future update, the workflow will be:
+
+<Steps>
+  <Step title="Open the Ringtones tab">
+    Tap the **Ringtones** tab at the bottom of the app.
+  </Step>
+
+  <Step title="Add your M4R file">
+    Tap **Add Ringtones** to open the Files picker, then select one or more M4R files. You can also share an M4R from another app directly to ByeTunes to add it to the queue.
+  </Step>
+
+  <Step title="Inject to device">
+    Tap **Inject to Device**. A progress indicator shows the upload status for each ringtone.
+  </Step>
+
+  <Step title="Confirm in Settings">
+    On your iPhone, go to **Settings > Sounds & Haptics > Ringtone** to verify the ringtone was installed.
+  </Step>
+</Steps>
+
+<Tip>
+You can convert an MP3 to M4R using a tool like GarageBand on Mac, or a free online converter. Keep the audio under 30 seconds for best compatibility.
+</Tip>
+
+<CardGroup cols={2}>
+  <Card title="Music Injection" href="/features/music-injection">
+    Inject full songs into your Apple Music library.
+  </Card>
+  <Card title="Shortcuts" href="/settings/shortcuts">
+    Use the ByeTunes Shortcut to share ringtones directly from the Files app.
+  </Card>
+  <Card title="Backup & Restore" href="/settings/backup-restore">
+    Back up your library including Ringtones.plist before making changes.
+  </Card>
+  <Card title="Troubleshooting" href="/troubleshooting/common-issues">
+    Fix common problems with ringtone injection.
+  </Card>
+</CardGroup>

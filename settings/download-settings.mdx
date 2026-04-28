@@ -1,0 +1,146 @@
+---
+title: "Metadata and Download Settings Reference for ByeTunes"
+description: "Reference for every metadata source, download server, audio quality, and file-saving option in ByeTunes' Metadata & Download Settings screen."
+---
+
+The **Metadata & Download Settings** screen is accessible from **Settings > Metadata & Download Settings**. It controls how ByeTunes enriches imported songs with metadata, which backend it uses for downloads, audio quality preferences, and where downloaded files are saved.
+
+## Opening the settings screen
+
+Tap **Settings**, then tap **Metadata & Download Settings** under the **Downloads** section. The screen slides in as a navigation sheet and groups options into **Metadata** and **Downloads** sections.
+
+---
+
+## Metadata settings
+
+These settings control how song information (title, artist, album, artwork, lyrics, store IDs) is fetched and applied when you import or download audio files.
+
+### Import Metadata Source
+
+Controls how ByeTunes looks up and enriches metadata for imported songs.
+
+| Option | Behavior |
+|--------|----------|
+| **Local** | Uses only the embedded tags already in the audio file. No network requests are made. |
+| **Auto** | Automatically fetches metadata from Apple Music or Deezer based on the song. |
+
+<Note>
+When **Local** is selected, the **Rich Apple Metadata** and **Autofetch** toggles are hidden because they have no effect without a remote metadata source.
+</Note>
+
+### Rich Apple Metadata
+
+When enabled, ByeTunes fetches extended store data from Apple Music including Store Item IDs, XID, storefront ID, composer ID, and copyright details. This data improves how Apple Music recognizes and displays injected songs, especially on iOS 26.4+.
+
+Requires a remote metadata source (not **Local**).
+
+### Autofetch
+
+When enabled, ByeTunes automatically fetches metadata as soon as you import a song, without requiring you to tap a refresh button manually. Applies when the metadata source is set to iTunes, Deezer, or Apple.
+
+### Fetch Lyrics
+
+When enabled, ByeTunes automatically retrieves lyrics from third-party sources when importing songs. The fetch order is:
+
+1. LRCLIB
+2. Musixmatch
+3. NetEase
+
+Hidden when **Apple Music Subscription Lyrics** is enabled, since that option supersedes embedded or third-party lyrics.
+
+### Apple Music Subscription Lyrics
+
+When enabled, ByeTunes marks injected songs so Apple Music fetches synced lyrics directly from your Apple Music subscription rather than using embedded or third-party lyrics. This provides time-synced lyrics in the Music app for subscribers.
+
+Requires an active Apple Music subscription and an internet connection at playback time.
+
+### Store Region
+
+Visible only when the metadata source is set to iTunes. Sets the iTunes storefront region code used for metadata lookups.
+
+Common values: `US`, `GB`, `DE`, `JP`, `AU`. Enter the two-letter ISO country code for your region.
+
+---
+
+## Download settings
+
+These settings control the behavior of the **Download** tab, including which server handles downloads, audio quality, and where files are saved.
+
+### Search Source
+
+Controls which service is used to search for songs in the **Download** tab.
+
+| Option | Description |
+|--------|-------------|
+| **Apple Music** | Searches the Apple Music catalog (default). |
+
+### Downloader Server
+
+Selects the backend used for song downloads.
+
+| Option | Description |
+|--------|-------------|
+| **Auto** | ByeTunes selects a server automatically using its fallback chain. |
+| **Yoinkify** | Forces the Yoinkify backend. |
+| **HiFi One** | Forces the HiFi One (Tidal-based) backend. |
+| **HiFi Two** | Forces the HiFi Two (Tidal-based) backend. |
+
+When **Auto** is selected, a separate **Auto** quality section appears below. When a specific server is selected, its corresponding quality settings appear instead.
+
+### Keep Downloaded Songs
+
+When enabled, ByeTunes saves a local copy of each downloaded audio file. The file is stored in the app's Documents folder (or a custom folder if one is configured).
+
+Disabled by default. Useful if you want to keep a local archive of downloaded songs alongside injecting them to your device.
+
+### Download Folder
+
+Visible only when **Keep Downloaded Songs** is on. Tap this row to open the Files picker and select a folder where downloaded songs will be saved. The selection is stored as a bookmark so ByeTunes can write to the folder even after the app restarts.
+
+---
+
+## Per-server quality settings
+
+The quality options shown depend on which **Downloader Server** is selected.
+
+### Auto quality (shown when server is Auto)
+
+| Setting | Description |
+|---------|-------------|
+| **Automatic Quality** | Controls the quality tier for the Yoinkify attempt and the fallback chain. Options include standard and high tiers. |
+
+### Yoinkify format (shown when server is Yoinkify)
+
+| Option | Description |
+|--------|-------------|
+| **FLAC** | Requests lossless FLAC output from Yoinkify. |
+| **MP3** | Requests MP3 output. |
+| **AAC** | Requests AAC output. |
+
+### HiFi One / HiFi Two quality (shown when server is HiFi One or HiFi Two)
+
+Sets the quality parameter sent to the selected Tidal backend.
+
+| Option | Description |
+|--------|-------------|
+| **LOSSLESS** | Lossless FLAC quality via Tidal. |
+| Other tiers | Lower quality options for bandwidth-constrained situations. |
+
+<Tip>
+If you are unsure which server to use, leave **Downloader Server** set to **Auto**. ByeTunes will try Yoinkify first and fall back through the available backends automatically.
+</Tip>
+
+<CardGroup cols={2}>
+  <Card title="Download" href="/features/download">
+    Use the Download tab to find and download songs directly in ByeTunes.
+  </Card>
+  <Card title="Metadata" href="/features/metadata">
+    Learn how metadata is matched, edited, and written to your library.
+  </Card>
+  <Card title="Lyrics" href="/features/lyrics">
+    Understand how lyrics sources and subscription lyrics work together.
+  </Card>
+  <Card title="Music Injection" href="/features/music-injection">
+    Inject downloaded or imported audio files into Apple Music.
+  </Card>
+</CardGroup>

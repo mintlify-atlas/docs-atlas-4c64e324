@@ -1,0 +1,64 @@
+---
+title: "ByeTunes Frequently Asked Questions"
+description: "Answers to common questions about ByeTunes compatibility, supported formats, pairing files, syncing, updates, and open-source licensing."
+---
+
+Answers to the questions that come up most often. If your question is not covered here, check [Common Issues](/troubleshooting/common-issues) or ask in the [community Discord](https://discord.gg/dDQ4P4SyKJ).
+
+<AccordionGroup>
+  <Accordion title="Does ByeTunes work without a jailbreak?">
+    Yes. ByeTunes does not require a jailbreak. It uses pairing files and the official lockdown protocol — the same mechanism iTunes uses to communicate with iOS devices over a local network. No system files are modified and no exploits are involved.
+  </Accordion>
+
+  <Accordion title="Which iOS versions does ByeTunes support?">
+    ByeTunes supports iOS 16.0 and later, including iOS 17, iOS 18, and iOS 26.
+
+    If you are on **iOS 26.4 or later**, you need an **RP Pairing File** instead of a regular pairing file. The app will prompt you to import one if it detects that your device requires it. See the [RP Pairing setup guide](/setup/ios264-rp-pairing) for details.
+  </Accordion>
+
+  <Accordion title="Will injected songs survive an iTunes sync?">
+    Likely not. An iTunes sync replaces the media library database with its own version, which will overwrite or remove songs that ByeTunes injected.
+
+    Always create a backup snapshot in **Settings > Backup & Restore** before syncing with iTunes. See the [Backup & Restore guide](/settings/backup-restore) for how to protect your library.
+  </Accordion>
+
+  <Accordion title="Can I inject FLAC files?">
+    Yes. ByeTunes supports MP3, FLAC, M4A, and WAV. When injecting a FLAC file, ByeTunes writes the correct codec information to the media database so Apple Music recognizes and plays the file correctly.
+  </Accordion>
+
+  <Accordion title="Why do some songs show artwork but others don't?">
+    Artwork is pulled from two sources: embedded tags in the audio file, and Apple Music's catalog. When ByeTunes fetches metadata, it tries to match the song against Apple Music and use Apple's artwork.
+
+    Songs that do not have a matching entry in the Apple Music catalog — for example, local recordings, obscure releases, or files with incomplete tags — may not get artwork automatically. You can set artwork manually using the metadata editor before injecting. See [Metadata](/features/metadata) for more details.
+  </Accordion>
+
+  <Accordion title="Can I use ByeTunes to add music from streaming services?">
+    Yes. The **Download** tab lets you search for tracks and download them directly to your device. ByeTunes supports Apple Music and Deezer as search and download sources. See [Download](/features/download) for the full list of options and quality settings.
+  </Accordion>
+
+  <Accordion title="How do I update ByeTunes?">
+    ByeTunes checks the GitHub releases page on startup. If a newer version is available, it shows a popup with a link to download the latest IPA.
+
+    You can also check for updates manually by tapping the **Version** row in **Settings > About**. If an update is found, the row changes to a download link.
+
+    Download the latest release from [https://github.com/EduAlexxis/ByeTunes/releases](https://github.com/EduAlexxis/ByeTunes/releases).
+  </Accordion>
+
+  <Accordion title="What is the pairing file used for?">
+    The pairing file contains the cryptographic credentials that let ByeTunes authenticate with your device over the local network. It is the same type of credential iTunes uses when it pairs with a device for the first time.
+
+    Without a valid pairing file, ByeTunes cannot connect to your device. See [Pairing File setup](/setup/pairing-file) for instructions on generating and importing one.
+
+    <Note>
+      On iOS 26.4 and later, ByeTunes requires an **RP Pairing File** instead of a regular pairing file. The two formats are not interchangeable.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Can I use ByeTunes on multiple devices?">
+    Yes, but you need a separate pairing file for each device. Pairing files are device-specific — a pairing file generated for one iPhone will not work on another. Repeat the pairing setup process for each device you want to use with ByeTunes.
+  </Accordion>
+
+  <Accordion title="Is ByeTunes open source?">
+    Yes. The full source code is available on GitHub at [https://github.com/EduAlexxis/ByeTunes](https://github.com/EduAlexxis/ByeTunes) under the MIT license. If you want to build the app yourself, see the [build prerequisites](/build/prerequisites) and [Xcode build guide](/build/xcode-build).
+  </Accordion>
+</AccordionGroup>

@@ -1,0 +1,59 @@
+---
+title: 'Set up LocalDevVPN for ByeTunes connection'
+description: 'Install and connect LocalDevVPN (or StosVPN) to create the local network tunnel ByeTunes needs to reach your device at 10.7.0.1.'
+---
+
+ByeTunes communicates with your iPhone over a loopback network tunnel rather than a traditional USB or Wi-Fi connection. For that tunnel to exist, a VPN app must be active on your device. LocalDevVPN is the recommended app for this — it creates a lightweight local VPN interface that routes traffic to `10.7.0.1`, the address ByeTunes uses to connect. Without an active VPN tunnel, ByeTunes cannot reach the device and injection will not start.
+
+<Warning>
+  ByeTunes will not be able to connect to your device unless LocalDevVPN (or an equivalent VPN app) is active and connected. Keep the VPN running whenever you use ByeTunes.
+</Warning>
+
+## Install and connect LocalDevVPN
+
+<Steps>
+  <Step title="Download LocalDevVPN from the App Store">
+    Open the App Store on your iPhone and search for **LocalDevVPN**, or follow this link:
+
+    [LocalDevVPN on the App Store](https://apps.apple.com/us/app/localdevvpn/id6755608044)
+
+    LocalDevVPN is also available through AltStore PAL if you prefer a sideloaded installation.
+  </Step>
+
+  <Step title="Open LocalDevVPN and tap Connect">
+    Launch **LocalDevVPN** and tap the **Connect** button. iOS will ask you to allow the app to add a VPN configuration to your device — tap **Allow** and authenticate with Face ID, Touch ID, or your passcode when prompted.
+
+    Once connected, the status indicator in the app turns green and a VPN badge appears in the iOS status bar.
+  </Step>
+
+  <Step title="Verify the tunnel is active before importing your pairing file">
+    The VPN must be connected before you attempt to import a pairing file or inject music. If you open ByeTunes while the tunnel is down, the connection will time out. Return to LocalDevVPN, confirm it shows **Connected**, then switch back to ByeTunes.
+  </Step>
+
+  <Step title="Keep LocalDevVPN connected while using ByeTunes">
+    ByeTunes maintains an ongoing heartbeat with your device throughout every session. If the VPN disconnects mid-injection, the transfer will fail. Leave LocalDevVPN running in the background any time you plan to use ByeTunes.
+
+    <Tip>
+      Add LocalDevVPN to your iPhone's Lock Screen or Back Tap shortcut so you can reconnect quickly if the tunnel drops.
+    </Tip>
+  </Step>
+</Steps>
+
+## Alternative: StosVPN
+
+If you would rather not use LocalDevVPN, **StosVPN** is a compatible alternative that creates the same local tunnel interface. The setup process is nearly identical — install the app, grant the VPN configuration permission, and tap **Connect** before opening ByeTunes. Either app works; the important thing is that some local VPN tunnel is active and showing a connected status before ByeTunes tries to reach the device.
+
+<Note>
+  Both LocalDevVPN and StosVPN create a local-only VPN that does not route your internet traffic through any external server. Your data stays on your device.
+</Note>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Import a pairing file" icon="key" href="/setup/pairing-file">
+    Generate and import the pairing file required for iOS 16.0 through 26.3.x.
+  </Card>
+  <Card title="RP Pairing for iOS 26.4+" icon="lock-keyhole" href="/setup/ios264-rp-pairing">
+    Set up RP Pairing if you are running iOS 26.4 or newer.
+  </Card>
+</CardGroup>

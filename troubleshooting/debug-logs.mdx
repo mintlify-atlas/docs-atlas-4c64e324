@@ -1,0 +1,69 @@
+---
+title: "Collecting and Sharing ByeTunes Debug Logs"
+description: "How to access the ByeTunes Console in Settings, copy or export the MusicManager_Logs.txt file, and what to include in a bug report on GitHub Issues or Discord."
+---
+
+ByeTunes records detailed diagnostic output for every operation — injection steps, AFC file transfers, database writes, connection events, and idevice library messages. When something goes wrong, these logs are the fastest way to understand what happened and get help.
+
+## Where logs live
+
+All log output is written to an in-memory buffer and to a temporary file (`idevice-logs.txt`) in the system's temporary directory. The **Console** view in Settings displays the in-memory buffer in real time, so you see output as it happens.
+
+To open the Console:
+
+1. Open **Settings** in ByeTunes.
+2. Scroll down to the **Debug** section.
+3. Tap **Console**.
+
+The Console shows a monospaced, timestamped feed of all app activity since the last launch, including injection steps, AFC operations, database operations, and heartbeat events.
+
+## Capturing logs for a specific issue
+
+The most useful logs are captured immediately after reproducing the problem. Logs from a previous session or unrelated operations add noise that makes debugging harder.
+
+<Steps>
+  <Step title="Reproduce the issue">
+    Perform the exact operation that is failing — for example, start an injection, wait for it to fail, and note the error shown in the UI.
+  </Step>
+  <Step title="Open the Console immediately">
+    Go to **Settings > Debug > Console** right after the failure. The log buffer captures the full session from launch, so opening it quickly ensures nothing is missed.
+  </Step>
+  <Step title="Copy the logs to clipboard">
+    Tap the **copy** button (the two overlapping squares icon) in the top-right of the Console. A **"Logs copied"** banner confirms the logs are on your clipboard.
+  </Step>
+  <Step title="Export the log file (optional)">
+    Tap the **share** button (the box with an arrow) to save the logs to `Logs/MusicManager_Logs.txt` in the app's documents folder and open the iOS share sheet. From there you can save to Files, send via AirDrop, attach to an email, or share directly.
+
+    <Note>
+      The exported file always uses the same path — `Logs/MusicManager_Logs.txt` — so it overwrites the previous export. If you need to keep multiple log files, rename or move the file before exporting again.
+    </Note>
+  </Step>
+  <Step title="Attach logs to your report">
+    Paste the copied text or attach the exported file when filing a bug report. Include the information listed in the next section.
+  </Step>
+</Steps>
+
+## What to include in a bug report
+
+A good bug report gives the developer enough context to reproduce and fix the issue without asking follow-up questions. Include:
+
+- **iOS version** — for example, iOS 18.3.2 or iOS 26.4
+- **ByeTunes version** — visible in **Settings > About > Version**
+- **Description of what you did** — step by step, starting from launch
+- **Description of what happened** — the exact error or unexpected behavior
+- **Full log from the failed operation** — paste the Console output or attach `MusicManager_Logs.txt`
+
+<Tip>
+  If the log is very long, look for lines beginning with `ERROR` or `[DeviceManager]` near the end — those usually point directly to the failure. Paste the full log anyway so nothing is missed.
+</Tip>
+
+## Where to get help
+
+<CardGroup cols={2}>
+  <Card title="GitHub Issues" icon="github" href="https://github.com/EduAlexxis/ByeTunes/issues">
+    File a bug report or feature request. Attach your logs and include your iOS version and ByeTunes version.
+  </Card>
+  <Card title="Community Discord" icon="discord" href="https://discord.gg/dDQ4P4SyKJ">
+    Chat with other users and the developer. Good for quick questions and sharing logs for live troubleshooting.
+  </Card>
+</CardGroup>

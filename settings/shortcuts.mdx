@@ -1,0 +1,90 @@
+---
+title: "Automate ByeTunes with the iOS Shortcuts Integration"
+description: "Install the ByeTunes iCloud Shortcut to share audio files for automatic injection. Combine with Files app automations for hands-free library updates."
+---
+
+ByeTunes integrates with iOS Shortcuts in two ways: via native **App Intents** that appear automatically in the Shortcuts app, and via an iCloud Shortcut link you can install for share-sheet automation. When your device is connected, both methods can inject audio files without requiring you to open the app and tap through the injection flow manually.
+
+## Native App Intents
+
+ByeTunes exposes two native App Intents that appear automatically in the iOS Shortcuts app without any installation step:
+
+- **Inject Music** (`InjectMusicIntent`) — accepts one or more audio files and injects them directly into your Apple Music library. Supported in Siri phrases like "Inject music with ByeTunes" or "Add songs to ByeTunes".
+- **Inject Ringtone** (`InjectRingtoneIntent`) — accepts a single audio file and injects it as a ringtone. Supported with phrases like "Inject ringtone with ByeTunes".
+
+Both intents open the app when run and show a dialog confirming how many songs or ringtones were injected. If the device is not connected at the time, the intent reports "Device not connected" and exits without injecting.
+
+<Note>
+  App Intents require the device to be connected and ByeTunes to have a valid pairing file imported before they can run successfully.
+</Note>
+
+## Installing the iCloud Shortcut
+
+<Steps>
+  <Step title="Open Settings in ByeTunes">
+    Tap the **Settings** tab at the bottom of the app.
+  </Step>
+
+  <Step title="Tap Add ByeTunes Shortcut">
+    Under the **Shortcuts** section, tap **Add ByeTunes Shortcut**. This opens the iCloud Shortcut link in the Shortcuts app.
+  </Step>
+
+  <Step title="Add the shortcut">
+    In the Shortcuts app, tap **Add Shortcut** to save it to your library. The shortcut appears in your Shortcuts library and is available in the Share sheet across iOS.
+  </Step>
+</Steps>
+
+You can also install the shortcut directly using this link:
+
+```
+https://www.icloud.com/shortcuts/49de36f87bf44b21a38056d3c33e41fe
+```
+
+## What the shortcut does
+
+The ByeTunes Shortcut accepts audio files shared to it and passes them to ByeTunes via the app's Open URL handler. ByeTunes receives the file, reads its extension, and routes it appropriately:
+
+- **Music files** (MP3, M4A, FLAC, WAV, AIFF) — added to the injection queue on the Music tab. If your device is connected, injection starts automatically.
+- **Ringtone files** (M4R) — added to the Ringtones tab and auto-injected if the device is connected.
+
+This mirrors the behavior of the "Open With ByeTunes" share sheet action but wraps it in a named shortcut that is easier to invoke from automation flows.
+
+<Note>
+Auto-injection only runs when ByeTunes detects an active device connection at the time the file is shared. If the device is not connected, the file is queued and you can trigger injection manually from the app.
+</Note>
+
+## Combining with Files app automations
+
+iOS Personal Automations (in the Shortcuts app) can trigger the ByeTunes Shortcut automatically based on events — for example, when a file appears in a specific folder.
+
+<Tip>
+Create a **Folder** automation that watches a folder in your Files app. Set it to run the ByeTunes Shortcut whenever a new audio file is added. This lets you drop songs into a folder and have them injected to your iPhone without opening ByeTunes at all.
+</Tip>
+
+A typical automation chain looks like this:
+
+1. A download manager or another app saves an audio file to a monitored folder in Files.
+2. The iOS automation triggers the ByeTunes Shortcut with that file.
+3. ByeTunes receives the file and auto-injects it to the connected device.
+4. The song appears in Apple Music immediately after injection completes.
+
+## Tips for reliable automation
+
+- Keep ByeTunes running in the background (or in the foreground) when using automations, so the Open URL handler can receive the file promptly.
+- Ensure your Local VPN (StosVPN or equivalent) is active before triggering an automation so ByeTunes can reach the device.
+- If injection fails because the device was not connected at share time, open ByeTunes, verify the connection, and tap **Inject to Device** to process the queued songs.
+
+<CardGroup cols={2}>
+  <Card title="Music Injection" href="/features/music-injection">
+    Learn the full injection workflow that the shortcut automates.
+  </Card>
+  <Card title="Ringtones" href="/features/ringtones">
+    Auto-inject M4R ringtones by sharing them through the shortcut.
+  </Card>
+  <Card title="Local Dev VPN Setup" href="/setup/localdevvpn">
+    Configure the VPN connection required for device communication.
+  </Card>
+  <Card title="Download" href="/features/download">
+    Download songs in ByeTunes and combine with shortcuts for full automation.
+  </Card>
+</CardGroup>

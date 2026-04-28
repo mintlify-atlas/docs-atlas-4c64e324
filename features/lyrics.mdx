@@ -1,0 +1,89 @@
+---
+title: "Lyrics: Auto-Fetch, Manual Search, and Apple Subscription"
+description: "Learn how ByeTunes fetches lyrics from LRCLIB, Musixmatch, and NetEase, and how to use Apple Subscription Lyrics to let Apple Music serve them instead."
+---
+
+ByeTunes can attach lyrics to every song before it's injected into your library. Lyrics are stored directly in `MediaLibrary.sqlitedb` so Apple Music displays them natively in the Now Playing screen — no third-party app required.
+
+## Auto-fetch on import
+
+If **Fetch Lyrics** is enabled in Settings, ByeTunes automatically queries for lyrics as each song is imported into the queue. The search uses the song's title, artist, album, and duration.
+
+The fetch uses a three-source fallback chain:
+
+1. **LRCLIB** — tried first; returns plain or synced lyrics via a public API.
+2. **Musixmatch** — tried if LRCLIB returns nothing; uses a best-match scoring algorithm that weighs title, artist, album, and duration similarity.
+3. **NetEase** — tried as a last resort when both LRCLIB and Musixmatch fail.
+
+The first source to return a non-empty result wins. If none of the three sources have a match, the song is imported without lyrics.
+
+<Note>
+  Auto-fetch is skipped when **Apple Subscription Lyrics** is enabled, because in that mode Apple Music serves the lyrics itself rather than reading them from the database.
+</Note>
+
+## How lyrics are cleaned before storage
+
+Raw lyrics from any source often contain timestamps, metadata headers, contributor footers, and title lines that clutter the displayed text. ByeTunes runs `cleanLyrics()` on every result before writing it to the database:
+
+- LRC timestamp tags (`[00:12.34]`) are stripped.
+- Metadata header tags (`[ar:Artist]`, `[ti:Title]`, etc.) are removed.
+- Contributor footer lines (e.g. "3 Contributors") are removed.
+- Lines that are identical to the song title (often repeated as a header in scraped lyrics) are dropped.
+- Consecutive blank lines are collapsed to a single blank line.
+
+The cleaned lyrics are stored in the `lyrics` table in `MediaLibrary.sqlitedb` and read by Apple Music's built-in lyrics viewer.
+
+## Manual lyrics search
+
+If auto-fetch finds nothing, or if you want to pick a specific version, you can search manually from the **Edit Metadata** sheet.
+
+<Steps>
+  <Step title="Open Edit Metadata">
+    Tap any song row in the Music tab queue. The **Edit Metadata** sheet opens with all fields visible.
+  </Step>
+  <Step title="Open the Lyrics search sheet">
+    Scroll to the **Lyrics** section and tap the **magnifying glass** icon in the section header. This opens the **Select Lyrics** sheet. The search query is pre-filled with the song's current artist and title.
+  </Step>
+  <Step title="Choose a source">
+    Use the **Service** picker at the top of the sheet to select which source to query: **LRCLIB**, **Musixmatch**, or **NetEase**. Switching the picker immediately re-runs the search against the new source.
+  </Step>
+  <Step title="Refine your search">
+    Edit the search field if the pre-filled query doesn't match. Tap **Search** on the keyboard to submit. Results are listed with title, artist, album, and a clock icon for entries that include synced (timed) lyrics.
+  </Step>
+  <Step title="Tap a result to apply">
+    Tap any result row. ByeTunes fetches the full lyric text from that entry, cleans it, and pastes it into the **Lyrics** text field in **Edit Metadata**. The sheet closes automatically. Tap **Save** in **Edit Metadata** to keep the change.
+  </Step>
+</Steps>
+
+## Apple Subscription Lyrics
+
+When you have an active Apple Music subscription, Apple Music can serve its own synchronized lyrics for catalog tracks. ByeTunes can configure the database so Apple Music uses subscription lyrics instead of the embedded local text.
+
+To enable this, turn on **Apple Subscription Lyrics** in Settings. When this setting is active:
+
+- ByeTunes sets the appropriate flags in `MediaLibrary.sqlitedb` during injection to signal that the track should receive subscription lyrics.
+- The auto-fetch step is skipped entirely for affected songs, since embedding local lyrics would override Apple's service.
+- Songs that are not in the Apple Music catalog will fall back to no lyrics (you can still add them manually via the Edit Metadata sheet).
+
+<Warning>
+  Apple Subscription Lyrics only works for tracks that exist in the Apple Music catalog and when your device has an active subscription. If a song is not in the catalog, no lyrics will appear unless you embed them manually.
+</Warning>
+
+<Tip>
+  If a song has embedded lyrics but Apple Music is showing the wrong text, open **Edit Metadata**, clear the **Lyrics** field, and re-inject. Apple Music will then fall back to its subscription lyrics for that track (if eligible) or show nothing.
+</Tip>
+
+<CardGroup cols={2}>
+  <Card title="Metadata" href="/features/metadata">
+    Edit all metadata fields including the lyrics text field.
+  </Card>
+  <Card title="Music Injection" href="/features/music-injection">
+    Inject songs with lyrics into your Apple Music library.
+  </Card>
+  <Card title="Download" href="/features/download">
+    Downloaded songs also benefit from auto-fetched lyrics before injection.
+  </Card>
+  <Card title="Troubleshooting" href="/troubleshooting/common-issues">
+    Fix lyrics not showing in Apple Music after injection.
+  </Card>
+</CardGroup>

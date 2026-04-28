@@ -1,133 +1,89 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
-icon: 'star'
+title: "ByeTunes: iTunes-free music injection for iOS"
+description: "ByeTunes injects music directly into your iOS media library without iTunes or a computer. Manage your native Apple Music library on your own terms."
 ---
 
-## Setting up
+ByeTunes is a native iOS app that lets you add music directly to your Apple Music library — no Mac, no iTunes, no syncing. By communicating with the iOS media database over a local connection, ByeTunes gives you full control over your music library from your iPhone itself.
 
-Get your documentation site up and running in minutes.
-
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Get music into your library in minutes with the step-by-step guide.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Pairing File Setup" icon="link" href="/setup/pairing-file">
+    Connect ByeTunes to your device using a pairing file.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Music Injection" icon="music" href="/features/music-injection">
+    Learn how to add MP3, FLAC, M4A, and WAV files to your library.
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Download Songs" icon="arrow-down-circle" href="/features/download">
+    Search Apple Music and download songs directly inside the app.
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## What ByeTunes does
 
-Everything you need to create world-class documentation.
+ByeTunes works by connecting to your iPhone over a local VPN tunnel, reading and writing directly to the iOS media database (`MediaLibrary.sqlitedb`) and iTunes Control file system. When you inject a song, ByeTunes:
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+1. Copies the audio file to the device's iTunes music folder via AFC
+2. Builds a properly structured database entry with all metadata
+3. Triggers a sync notification so Apple Music picks up the new tracks immediately
 
-## Make your content agent ready
-
-Make your docs work for humans and AI agents alike.
-
-<Columns cols={2}>
-  <Card
-    title="Prompt component"
-    icon="robot"
-    href="/agent-ready/prompt"
-  >
-    Embed shareable AI prompts readers can copy or open in Cursor.
+<CardGroup cols={2}>
+  <Card title="Auto-fetch Metadata" icon="tag" href="/features/metadata">
+    Automatically pull album art, artist info, and lyrics from Apple Music and Deezer.
   </Card>
-  <Card
-    title="Visibility"
-    icon="eye"
-    href="/agent-ready/visibility"
-  >
-    Show different content to humans and agents reading your docs.
+  <Card title="Lyrics Support" icon="align-left" href="/features/lyrics">
+    Fetch synced lyrics from LRCLIB, Musixmatch, and NetEase.
   </Card>
-  <Card
-    title="Contextual menu"
-    icon="bolt"
-    href="/agent-ready/contextual"
-  >
-    Give readers one-click access to Claude, ChatGPT, Cursor, and more.
+  <Card title="Backup & Restore" icon="database" href="/settings/backup-restore">
+    Snapshot your media library before making changes.
   </Card>
-  <Card
-    title="AI coding tools"
-    icon="wand-magic-sparkles"
-    href="/ai-tools/claude-code"
-  >
-    Set up Claude Code, Cursor, or Windsurf with Mintlify's skill.
+  <Card title="iOS 26.4+ Support" icon="shield" href="/setup/ios264-rp-pairing">
+    Full RP Pairing tunnel support for the latest iOS versions.
   </Card>
-</Columns>
+</CardGroup>
 
-## Need inspiration?
+## Get started in four steps
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<Steps>
+  <Step title="Install LocalDevVPN">
+    Download [LocalDevVPN](https://apps.apple.com/us/app/localdevvpn/id6755608044) from the App Store and tap **Connect** to create the local tunnel ByeTunes needs.
+  </Step>
+  <Step title="Generate a pairing file">
+    Use [idevice_pair](https://github.com/jkcoxson/idevice_pair) on your computer to generate a pairing file, then AirDrop or share it to your iPhone.
+  </Step>
+  <Step title="Import the pairing file into ByeTunes">
+    On first launch, ByeTunes shows the pairing screen. Tap **Import Pairing File** and select the `.plist` file you generated.
+  </Step>
+  <Step title="Add and inject music">
+    Tap **Add Songs**, pick your audio files from the Files app, then tap **Inject to Device**. Your music appears in Apple Music immediately.
+  </Step>
+</Steps>
+
+## Supported formats
+
+| Type | Formats |
+|------|---------|
+| Music | MP3, M4A, FLAC, WAV, AIFF |
+| Ringtones | M4R |
+
+<Note>
+  ByeTunes requires iOS 16.0 or later. iOS 26.4 and newer require an RP Pairing File instead of a regular pairing file — see the [iOS 26.4+ setup guide](/setup/ios264-rp-pairing) for details.
+</Note>
+
+## Need help?
+
+<CardGroup cols={2}>
+  <Card title="Troubleshooting" icon="wrench" href="/troubleshooting/common-issues">
+    Solutions to the most common injection and connection problems.
+  </Card>
+  <Card title="Debug Logs" icon="terminal" href="/troubleshooting/debug-logs">
+    How to collect and share logs when reporting a bug.
+  </Card>
+  <Card title="FAQ" icon="circle-question" href="/troubleshooting/faq">
+    Answers to frequently asked questions about ByeTunes.
+  </Card>
+  <Card title="GitHub Issues" icon="github" href="https://github.com/EduAlexxis/ByeTunes/issues">
+    Report bugs or request features on GitHub.
+  </Card>
+</CardGroup>

@@ -1,0 +1,87 @@
+---
+title: "iOS 26.4+ Artwork Repair Tools in ByeTunes Settings"
+description: "Fix missing artwork background colors for songs injected before iOS 26.4. ByeTunes fetches Apple Music color data and patches the library database."
+---
+
+iOS 26.4 introduced changes to how Apple Music stores and displays artwork colors. The Music app now reads additional color data columns from the library database (`artwork_token`, `best_artwork_token`) to render the dynamic background gradients and tinted UI that appear on the Now Playing screen and album views. Songs injected before you upgraded to iOS 26.4 were written without these columns, so they may show artwork images but display a gray or incorrect background color in the updated Music app.
+
+ByeTunes provides two repair tools to patch these older songs in-place. Both tools are only visible in the app when your connected device is running iOS 26.4 or newer — the **IOS 26.4+** section does not appear on older iOS versions.
+
+<Note>
+Both repair tools require an active internet connection and a connected device. ByeTunes fetches the color data Apple Music uses for artwork display from the iTunes Search API during the repair process.
+</Note>
+
+## Fix Artwork
+
+**Fix Artwork** (`repairArtworkForIOS264()`) targets songs that were injected before iOS 26.4. For each affected song, ByeTunes fetches the Apple Music color analysis data and writes the missing rows into the library database. This patches the background color display without modifying your audio files.
+
+Use this tool first. It is faster than the advanced option and covers the majority of artwork display issues.
+
+<Steps>
+  <Step title="Connect your device">
+    Ensure your iPhone is connected and ByeTunes shows **Connected** in Settings. The **Fix Artwork** button is disabled when no device is reachable.
+  </Step>
+
+  <Step title="Ensure internet access">
+    ByeTunes needs to reach the iTunes Search API to fetch color data. Confirm your Mac or the device running ByeTunes has internet access.
+  </Step>
+
+  <Step title="Tap Fix Artwork">
+    In **Settings > IOS 26.4+**, tap **Fix Artwork**. A progress popup appears with a "Fixing Artwork" heading and a step-by-step status message.
+  </Step>
+
+  <Step title="Wait for the repair to complete">
+    The popup updates as each song is processed. The repair time depends on the number of songs in your library. Do not close the app while the popup is visible.
+  </Step>
+
+  <Step title="Restart the Music app">
+    Once the popup dismisses, force-quit the Music app on your iPhone and reopen it. Artwork backgrounds should now display correctly for previously injected songs.
+  </Step>
+</Steps>
+
+## Advanced Artwork & Metadata Fix
+
+**Advanced Artwork & Metadata Fix** (`rebuildAlbumArtworkExperimental()`) performs a deeper repair pass. In addition to patching color data, it re-fetches missing artwork images and rebuilds metadata fields (Store IDs, XID, release dates, audio traits) for songs where that information is absent or incomplete.
+
+This option is marked as experimental in the app. It takes significantly longer than **Fix Artwork** and is intended for songs where the standard fix did not resolve the issue or where artwork itself is missing.
+
+<Steps>
+  <Step title="Run Fix Artwork first">
+    Try **Fix Artwork** before using the advanced option. In most cases it resolves display issues without needing the deeper repair.
+  </Step>
+
+  <Step title="Tap Advanced Artwork & Metadata Fix">
+    In **Settings > IOS 26.4+**, tap **Advanced Artwork & Metadata Fix**. A "Refreshing Metadata & Artwork" popup appears with a progress bar.
+  </Step>
+
+  <Step title="Wait — this can take a while">
+    The advanced repair fetches data for each song individually and may run for several minutes on larger libraries. Keep the app in the foreground and ensure both internet and device connections remain active.
+  </Step>
+
+  <Step title="Restart the Music app">
+    After the popup dismisses, restart the Music app on your iPhone to apply the changes.
+  </Step>
+</Steps>
+
+<Warning>
+Running **Advanced Artwork & Metadata Fix** on a very large library can take a long time. Consider creating a backup before using this tool so you can restore if the repair produces unexpected results.
+</Warning>
+
+## Why this section is only visible on iOS 26.4+
+
+The `supportsIOS26ArtworkRepair` property in `DeviceManager` returns `true` only when the connected device requires the RP Pairing tunnel — which is the case for iOS 26.4 and later. On older iOS versions, the artwork database schema does not include the affected columns, so the repair tools are not shown.
+
+<CardGroup cols={2}>
+  <Card title="Backup & Restore" href="/settings/backup-restore">
+    Create a snapshot before running repair tools on your library.
+  </Card>
+  <Card title="iOS 26.4 RP Pairing" href="/setup/ios264-rp-pairing">
+    Set up the RP Pairing File required for iOS 26.4 connections.
+  </Card>
+  <Card title="Music Injection" href="/features/music-injection">
+    Songs injected after upgrading to iOS 26.4 include the correct artwork data automatically.
+  </Card>
+  <Card title="Common Issues" href="/troubleshooting/common-issues">
+    Troubleshoot artwork and display issues in Apple Music.
+  </Card>
+</CardGroup>

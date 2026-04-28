@@ -1,0 +1,55 @@
+---
+title: "Prerequisites for Building ByeTunes from Source"
+description: "What you need to build ByeTunes: Xcode 15+, an iOS 16+ device, Rust with the aarch64-apple-ios target, and Xcode Command Line Tools."
+---
+
+Before you start compiling ByeTunes, make sure your development environment meets all of the requirements below. The build process involves compiling a Rust library (`idevice`) for the `aarch64-apple-ios` target and then linking it into the Xcode project, so you need both Apple and Rust tooling installed on your Mac.
+
+## Requirements checklist
+
+- **Mac with Xcode 15 or later** — ByeTunes is a native iOS app written in Swift; you need a Mac running a recent version of Xcode to build it.
+- **iOS device running iOS 16.0 or later** — ByeTunes communicates directly with the device's media database over a local network connection; a physical device is required.
+- **Rust toolchain** — The `idevice` library that ByeTunes depends on is written in Rust. You need `rustup` and Cargo installed to compile it.
+- **`aarch64-apple-ios` Rust target** — You must add this target to your Rust toolchain before running the Cargo build.
+- **Xcode Command Line Tools** — Required by Cargo and various build scripts when targeting Apple platforms.
+- **Basic Swift and iOS development knowledge** — Familiarity with Xcode project structure, build phases, and Swift bridging headers will help you follow the integration steps.
+
+## Install Xcode Command Line Tools
+
+If you have not already installed the Xcode Command Line Tools, run the following command in your terminal:
+
+```bash
+xcode-select --install
+```
+
+A system dialog will appear prompting you to install the tools. Complete that installation before proceeding.
+
+## Install Rust
+
+If Rust is not yet installed on your Mac, install it via `rustup`:
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+Follow the on-screen prompts to complete the installation, then restart your terminal (or run `source "$HOME/.cargo/env"`) so that `cargo` and `rustup` are available in your `PATH`.
+
+## Add the iOS target to Rust
+
+ByeTunes's dependency must be compiled for the 64-bit ARM iOS architecture. Add that target to your Rust toolchain:
+
+```bash
+rustup target add aarch64-apple-ios
+```
+
+<Note>
+  Once this target is added you can verify it was registered with `rustup target list --installed`.
+</Note>
+
+## What you do not need
+
+You do not need a Mac connected to the device at all times during regular use—connection is handled over the local network after the initial pairing step. However, for the initial build and code-signing you do need a physical Mac with Xcode open and a development team configured.
+
+## Next steps
+
+With all prerequisites satisfied, proceed to [building and integrating idevice](/build/idevice-setup).

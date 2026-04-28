@@ -1,0 +1,128 @@
+---
+title: "Install ByeTunes on your iPhone via sideloading"
+description: "Download the ByeTunes IPA and install it using AltStore, Signulous, or Sideloadly. Also covers installing the required LocalDevVPN companion app."
+---
+
+ByeTunes is not available on the App Store. It is distributed as a free IPA file that you install by sideloading — signing the app outside of Apple's standard distribution channel. This page covers the three most common methods and what to install alongside ByeTunes to make it work.
+
+<Note>
+  ByeTunes requires **iOS 16.0 or later**. Verify your iOS version in **Settings → General → About** before installing.
+</Note>
+
+## Before you start
+
+You need two things on your device:
+
+- **ByeTunes** — the app itself, installed via one of the methods below.
+- **LocalDevVPN** — a separate app that creates the local tunnel ByeTunes uses to communicate with the iOS media database. Install it from the [App Store](https://apps.apple.com/us/app/localdevvpn/id6755608044) or AltStore PAL.
+
+## Download the ByeTunes IPA
+
+All releases are published on GitHub. Download the latest `.ipa` file from the [ByeTunes releases page](https://github.com/EduAlexxis/ByeTunes/releases).
+
+Save the IPA somewhere accessible from your computer — you will use it in the steps below.
+
+## Install ByeTunes
+
+<Tabs>
+  <Tab title="AltStore">
+    AltStore signs apps using your Apple ID and refreshes them every 7 days. AltStore PAL (EU) removes the 7-day limit.
+
+    <Steps>
+      <Step title="Install AltStore on your computer">
+        Download AltStore from [altstore.io](https://altstore.io) and follow the setup guide to install the AltStore companion app on your Mac or PC and the AltStore app on your iPhone.
+      </Step>
+      <Step title="Open AltStore on your iPhone">
+        Connect your iPhone to your computer via USB. Make sure AltStore's companion app is running on your computer.
+      </Step>
+      <Step title="Sideload the IPA">
+        In AltStore on your iPhone, tap the **+** button in the **My Apps** tab, navigate to the ByeTunes `.ipa` file, and select it.
+
+        AltStore will sign the IPA with your Apple ID and install it.
+      </Step>
+      <Step title="Trust the developer certificate">
+        Go to **Settings → General → VPN & Device Management**, find your Apple ID under Developer App, and tap **Trust**.
+      </Step>
+    </Steps>
+
+    <Tip>
+      If you use AltStore PAL, you can add the ByeTunes source directly if one is available, which automates future updates.
+    </Tip>
+  </Tab>
+
+  <Tab title="Signulous">
+    Signulous is a paid signing service that installs apps over the air without needing a computer for each install.
+
+    <Steps>
+      <Step title="Create a Signulous account">
+        Sign up at [signulous.com](https://www.signulous.com) and subscribe to a plan. Signulous provides enterprise certificates that allow installation without per-device registration.
+      </Step>
+      <Step title="Upload the IPA">
+        Log into the Signulous dashboard, go to **Upload IPA**, and upload the ByeTunes `.ipa` file you downloaded from GitHub.
+      </Step>
+      <Step title="Install on your device">
+        After the IPA is processed, Signulous generates an install link. Open it on your iPhone in Safari and tap **Install**.
+      </Step>
+      <Step title="Trust the certificate">
+        Go to **Settings → General → VPN & Device Management**, find the enterprise certificate, and tap **Trust**.
+      </Step>
+    </Steps>
+
+    <Warning>
+      Enterprise certificates used by signing services can be revoked by Apple. If ByeTunes stops launching, you may need to re-install using a fresh certificate.
+    </Warning>
+  </Tab>
+
+  <Tab title="Sideloadly">
+    Sideloadly is a free desktop app for Windows and macOS that signs and installs IPAs using your Apple ID.
+
+    <Steps>
+      <Step title="Download and install Sideloadly">
+        Get Sideloadly from [sideloadly.io](https://sideloadly.io) and install it on your Mac or Windows PC.
+      </Step>
+      <Step title="Connect your iPhone">
+        Connect your iPhone to your computer via USB and unlock it. Accept the "Trust this Computer" prompt if it appears.
+      </Step>
+      <Step title="Load the IPA and sign">
+        Open Sideloadly. Drag the ByeTunes `.ipa` file into the window, enter your Apple ID, and click **Start**. Sideloadly will sign the app and install it.
+
+        Free Apple IDs are limited to 3 sideloaded apps at a time and require re-signing every 7 days.
+      </Step>
+      <Step title="Trust the developer certificate">
+        Go to **Settings → General → VPN & Device Management**, find your Apple ID under Developer App, and tap **Trust**.
+      </Step>
+    </Steps>
+  </Tab>
+</Tabs>
+
+## Install LocalDevVPN
+
+LocalDevVPN is required for ByeTunes to function. It is available on the App Store — no sideloading needed.
+
+<Steps>
+  <Step title="Download LocalDevVPN">
+    Install [LocalDevVPN](https://apps.apple.com/us/app/localdevvpn/id6755608044) from the App Store. It is also available on AltStore PAL.
+  </Step>
+  <Step title="Connect the VPN">
+    Open LocalDevVPN and tap **Connect**. Allow the VPN configuration when iOS prompts you.
+
+    Keep LocalDevVPN connected any time you use ByeTunes.
+  </Step>
+</Steps>
+
+## Verify your installation
+
+Open ByeTunes. You should see the onboarding screen asking you to import a pairing file. If the app launches to this screen, installation was successful.
+
+If ByeTunes crashes or shows an "Untrusted Developer" error, make sure you completed the certificate trust step in **Settings → General → VPN & Device Management**.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Complete the setup and inject your first song.
+  </Card>
+  <Card title="Pairing file setup" icon="link" href="/setup/pairing-file">
+    Generate and import the pairing file ByeTunes needs to connect.
+  </Card>
+</CardGroup>

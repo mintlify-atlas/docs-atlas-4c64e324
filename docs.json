@@ -1,126 +1,92 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mintlify Starter Kit",
+  "name": "ByeTunes",
+  "theme": "almond",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#5B4FCF"
   },
-  "favicon": "/favicon.svg",
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/EduAlexxis/ByeTunes"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/EduAlexxis/ByeTunes"
+    }
+  },
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Get Started",
             "pages": [
-              "index",
+              "introduction",
               "quickstart",
-              "development"
+              "installation"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Setup & Connection",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "setup/localdevvpn",
+              "setup/pairing-file",
+              "setup/ios264-rp-pairing"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Core Features",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/components",
-              "essentials/reusable-snippets"
+              "features/music-injection",
+              "features/download",
+              "features/metadata",
+              "features/lyrics",
+              "features/playlists",
+              "features/ringtones"
             ]
           },
           {
-            "group": "Agent ready",
+            "group": "Settings & Maintenance",
             "pages": [
-              "agent-ready/prompt",
-              "agent-ready/visibility",
-              "agent-ready/contextual",
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "settings/backup-restore",
+              "settings/artwork-repair",
+              "settings/download-settings",
+              "settings/shortcuts"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "troubleshooting/common-issues",
+              "troubleshooting/debug-logs",
+              "troubleshooting/faq"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "Building from Source",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Compilation",
             "pages": [
-              "api-reference/introduction"
+              "build/prerequisites",
+              "build/idevice-setup",
+              "build/xcode-build"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Architecture",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "build/architecture",
+              "build/database-schema"
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
+    ]
   }
 }

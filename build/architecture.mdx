@@ -1,0 +1,146 @@
+---
+title: "ByeTunes Architecture Overview for Developers"
+description: "A developer-oriented guide to ByeTunes's major components: DeviceManager, MediaLibraryBuilder, SongMetadata, ContentView, and the full injection flow."
+---
+
+ByeTunes is structured around a small set of focused Swift types, each responsible for one layer of the music injection pipeline. Understanding how these components fit together will help you navigate the codebase, debug issues, and contribute changes.
+
+## Component overview
+
+### DeviceManager (`iDeviceManager.swift`)
+
+`DeviceManager` is a singleton (`DeviceManager.shared`) that owns every piece of device communication. It conforms to `ObservableObject` so SwiftUI views can react to connection state changes.
+
+**Responsibilities:**
+
+- Loading and validating the pairing file from the app group shared container at `group.com.edualexxis.MusicManager`
+- Establishing a heartbeat connection to the device at `10.7.0.1` to verify that the link is alive
+- Providing AFC (Apple File Conduit) client handles for reading and writing files on the device
+- Killing the Music app on the device before injection so the database is not locked
+- Downloading and uploading `MediaLibrary.sqlitedb` and its WAL/SHM sidecar files
+- Uploading audio files to `/iTunes_Control/Music/F00/` and artwork to `/iTunes_Control/iTunes/Artwork/Originals/`
+- Sending a sync notification via the `notification_proxy` service to prompt iOS to reload its media library
+
+**Two connection modes:**
+
+| Mode | When used | How it works |
+|---|---|---|
+| Lockdown pairing | iOS up to 26.3 | Reads `pairingFile.plist`; creates a TCP provider to port `LOCKDOWN_PORT` at `10.7.0.1` |
+| RP Pairing tunnel | iOS 26.4 and later | Reads `rpPairingFile.plist`; calls `tunnel_create_rppairing` to `10.7.0.1:49152` and performs an RSD handshake |
+
+The `requiresRPPairingTunnel` property checks the running OS version and returns `true` for iOS 26.4+. Every internal method that talks to the device checks this flag and dispatches to the appropriate FFI function variant (e.g., `afc_client_connect` vs. `afc_client_connect_rsd`).
+
+---
+
+### MediaLibraryBuilder (`MediaLibraryBuilder.swift`)
+
+`MediaLibraryBuilder` is a static class with no instance state. It creates or modifies `MediaLibrary.sqlitedb`—the iOS native media database—using SQLite3 directly.
+
+**Responsibilities:**
+
+- Creating a fresh database from scratch (`createDatabase`) when no existing library is present
+- Merging new songs into an existing database downloaded from the device (`addSongsToExistingDatabase`)
+- Detecting ghost records (database entries whose audio files no longer exist on the device) and removing them
+- Inserting rows into all required tables: `item`, `item_extra`, `item_playback`, `item_stats`, `item_store`, `item_artist`, `album`, `album_artist`, `genre`, `artwork`, `artwork_token`, `best_artwork_token`, `lyrics`, and others
+- Generating SHA1-based artwork paths: the artwork token string is SHA1-hashed, the first two hex characters become a subdirectory name, and the remaining characters become the filename under `/iTunes_Control/iTunes/Artwork/Originals/`
+- Applying the correct schema variant for the detected iOS version via `DatabaseVersion`
+
+**Version-aware schema (`DatabaseVersion`):**
+
+`DatabaseVersion` inspects the major/minor/patch iOS version returned by lockdownd and maps it to one of four schema families:
+
+| Schema family | iOS versions | `PRAGMA user_version` |
+|---|---|---|
+| `ios16` | iOS 16 | 2320030 |
+| `ios17Or18` | iOS 17, 18 | 2120020 |
+| `ios26` | iOS 26 | 2320030 |
+| `ios26Subscription` | iOS 26 (subscription) | 2310000 |
+
+Schema families differ in which columns are present (e.g., `canonical_id`, `artwork_variant_type`, `sort_order` on `album_artist`, `store_id` on `album`) and how artwork source types are written.
+
+---
+
+### SongMetadata (`SongMetadata.swift`)
+
+`SongMetadata` is a value type (`struct`) holding all metadata fields for a single song. It is created from a local file URL and populates itself using two reading strategies:
+
+- **AVFoundation** — `AVURLAsset` loads standard metadata (title, artist, album, artwork, track number, disc number, lyrics). For M4A files, Apple-specific atoms (`cnID`, `sfID`, `atID`, `cmID`, `plID`, `geID`, `rtng`, `cprt`, `xid`) are parsed to populate store catalog fields.
+- **Custom FLAC parser** — When AVFoundation cannot read Vorbis comment tags from a FLAC file, `parseFLACMetadataFallback` reads the raw FLAC block structure to extract metadata and embedded artwork.
+
+Additional capabilities:
+
+- `generatePersistentId()` returns a random `Int64` in the range `1_000_000_000_000_000_000...Int64.max`, used as the primary key (`item_pid`) for new database rows.
+- `generateRemoteFilename()` produces a 12-character random alphanumeric string with the original file extension, used as the audio filename on the device.
+- `fetchLyrics()` tries three sources in order: LRCLIB, Musixmatch, and NetEase.
+- `appleMusicAudioTraits` and local audio inspection detect Dolby Atmos and spatial audio, which are written to `item_store.store_flavor` and `item_video.hls_asset_traits`.
+
+---
+
+### ContentView (`ContentView.swift`)
+
+`ContentView` is the root SwiftUI view. It manages the top-level application state and routes between views:
+
+- **Splash screen** — Shown for 2 seconds on launch.
+- **Onboarding** — If no valid pairing file is found, `OnboardingView` is presented to guide the user through importing one.
+- **RP Pairing upgrade prompt** — On iOS 26.4+, if only a standard pairing file is present, an overlay prompts the user to import an RP pairing file.
+- **Main tab interface** — Routes to `ModernTabView` (iOS 26+, uses Glass UI) or `LegacyTabBarView` (iOS 16–25), both of which host the music injection, download, playlists, settings, and (disabled) ringtones tabs.
+- **Update prompt** — Checks the GitHub Releases API on launch and displays an upgrade banner when a newer version is available.
+
+---
+
+### DownloadView (`DownloadView.swift`)
+
+`DownloadView` is the download tab UI. It exposes search functionality backed by the Apple Music / iTunes Search API and Deezer, a queue of pending downloads, and progress indicators. Downloaded files are handed off to `SongMetadata.fromURL` before being added to the injection queue.
+
+---
+
+## Injection flow
+
+The following describes the sequence of operations that happens when you tap "Inject to Device":
+
+```
+1. DeviceManager.startHeartbeat()
+       Ensures the device connection is alive before starting work.
+
+2. DeviceManager.terminateMusicAppIfRunning()
+       Sends SIGTERM then SIGKILL to the Music.app process so the
+       database is not locked during the following steps.
+
+3. DeviceManager.downloadFileFromDevice("/iTunes_Control/iTunes/MediaLibrary.sqlitedb")
+       Downloads the current database (plus .wal and .shm sidecar files)
+       to a local temp directory.
+
+4. MediaLibraryBuilder.addSongsToExistingDatabase(...)
+       Opens the downloaded database locally and inserts rows for each
+       new song. Generates PIDs, artist/album/genre records, artwork
+       tokens, and lyrics rows. Applies WAL checkpoint and switches to
+       DELETE journal mode before closing.
+
+5. DeviceManager.uploadFileToDevice(mergedDb, "/iTunes_Control/iTunes/MediaLibrary.sqlitedb")
+       Uploads the merged database back to the device, replacing the
+       original (old .wal and .shm files are removed first).
+
+6. DeviceManager.addSongToDevice(localURL, filename)
+       For each song, uploads the audio file to
+       /iTunes_Control/Music/F00/<randomFilename>.<ext>.
+
+7. DeviceManager.uploadArtwork(artworkData, relativePath)
+       For each song with artwork, writes the image file to
+       /iTunes_Control/iTunes/Artwork/Originals/<sha1dir>/<sha1file>.
+
+8. DeviceManager.sendSyncFinishedNotification()
+       Sends sync lifecycle notifications via the notification_proxy
+       service so iOS reloads the media library without requiring a
+       reboot or manual Music app restart.
+```
+
+This flow ensures that the database is always consistent with the files on disk: the merge happens locally on new data, and everything is uploaded together before the sync notification fires.
+
+## File layout on the device
+
+| Path | Contents |
+|---|---|
+| `/iTunes_Control/iTunes/MediaLibrary.sqlitedb` | The main media database |
+| `/iTunes_Control/Music/F00/` | Audio files (randomized filenames) |
+| `/iTunes_Control/iTunes/Artwork/Originals/<dir>/<file>` | Artwork images (SHA1-addressed) |
+| `/iTunes_Control/Ringtones/` | Ringtone files (feature currently disabled) |

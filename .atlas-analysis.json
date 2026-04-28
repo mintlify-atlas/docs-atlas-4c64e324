@@ -1,0 +1,109 @@
+{
+  "projectType": "saas",
+  "projectName": "ByeTunes",
+  "projectDescription": "A native iOS app that injects music and ringtones directly into your device's Apple Music library without iTunes or a computer, using direct database and file system access via pairing files.",
+  "theme": "almond",
+  "primaryColor": "#5B4FCF",
+  "lightColor": null,
+  "darkColor": null,
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "installation"
+            ]
+          },
+          {
+            "group": "Setup & Connection",
+            "pages": [
+              "setup/localdevvpn",
+              "setup/pairing-file",
+              "setup/ios264-rp-pairing"
+            ]
+          },
+          {
+            "group": "Core Features",
+            "pages": [
+              "features/music-injection",
+              "features/download",
+              "features/metadata",
+              "features/lyrics",
+              "features/playlists",
+              "features/ringtones"
+            ]
+          },
+          {
+            "group": "Settings & Maintenance",
+            "pages": [
+              "settings/backup-restore",
+              "settings/artwork-repair",
+              "settings/download-settings",
+              "settings/shortcuts"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "troubleshooting/common-issues",
+              "troubleshooting/debug-logs",
+              "troubleshooting/faq"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Building from Source",
+        "groups": [
+          {
+            "group": "Compilation",
+            "pages": [
+              "build/prerequisites",
+              "build/idevice-setup",
+              "build/xcode-build"
+            ]
+          },
+          {
+            "group": "Architecture",
+            "pages": [
+              "build/architecture",
+              "build/database-schema"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Direct music injection into iOS native media library (MP3, M4A, FLAC, WAV)",
+    "No computer required after initial pairing file setup",
+    "iOS 26.4+ RP Pairing tunnel support",
+    "Auto-fetch metadata from Apple Music, iTunes, and Deezer",
+    "Built-in music downloader with Apple Music search",
+    "Lyrics fetching from LRCLIB, Musixmatch, and NetEase",
+    "Full library backup and restore with database snapshots",
+    "Playlist creation and management",
+    "iOS 26.4+ artwork color repair and display support",
+    "Ringtone injection (M4R)"
+  ],
+  "publicApiSurface": [
+    "DeviceManager.shared — singleton for device connection management",
+    "DeviceManager.importPairingFile(from:) — import a pairing or RP pairing file",
+    "DeviceManager.startHeartbeat(forceReconnect:completion:) — establish device connection",
+    "DeviceManager.injectSongs(songs:progress:completion:) — inject audio files into media library",
+    "DeviceManager.injectRingtones(ringtones:progress:completion:) — inject ringtone files",
+    "DeviceManager.createDatabaseSnapshot(progress:completion:) — create a library backup",
+    "DeviceManager.restoreLatestDatabaseSnapshot(progress:completion:) — restore from backup",
+    "DeviceManager.deleteMediaLibrary(completion:) — wipe the iOS media library database",
+    "MediaLibraryBuilder.createDatabase(songs:version:playlistName:) — generate SQLite media database",
+    "MediaLibraryBuilder.addSongsToExistingDatabase(existingDbData:newSongs:...) — merge songs into existing DB",
+    "SongMetadata.fromURL(_:includeArtwork:) — extract metadata from a local audio file",
+    "SongMetadata.fetchLyrics(title:artist:album:durationMs:) — fetch lyrics with fallback chain",
+    "AppUpdateChecker.checkForUpdate() — check GitHub releases for a newer version"
+  ]
+}

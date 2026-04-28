@@ -1,0 +1,93 @@
+---
+title: "Inject Music into Apple Music Without iTunes"
+description: "Add MP3, M4A, FLAC, WAV, and AIFF files to Apple Music using ByeTunes. Covers the inject queue, auto-inject via share sheet, and batch skipping rules."
+---
+
+The Music tab is the core of ByeTunes. It lets you pick audio files from anywhere on your device, enrich them with metadata and artwork, then write them directly into the iOS media database — no computer, no iTunes sync required.
+
+## Adding songs to the queue
+
+<Steps>
+  <Step title="Open the Files picker">
+    On the **Music** tab, tap **Add Songs**. The iOS Files app picker opens, letting you browse iCloud Drive, On My iPhone, or any connected provider. You can select multiple files at once.
+
+    Supported audio formats:
+
+    | Format | Extension |
+    |--------|-----------|
+    | MP3 | `.mp3` |
+    | Apple Lossless / AAC | `.m4a` |
+    | FLAC | `.flac` |
+    | WAV | `.wav` |
+    | AIFF | `.aiff` |
+  </Step>
+  <Step title="Wait for metadata to load">
+    After you confirm your selection, ByeTunes copies each file into a staging area and reads its embedded tags — ID3 frames for MP3, iTunes atoms for M4A, and Vorbis comments for FLAC. If auto-fetch is enabled in Settings, it will also query Apple Music or Deezer for richer metadata and high-resolution artwork.
+
+    Each song appears in the **Queue** list with its artwork thumbnail, title, artist, and album. Tapping a row opens the **Edit Metadata** sheet where you can change any field before injecting.
+  </Step>
+  <Step title="Tap Inject to Device">
+    Once you're happy with the queue, tap **Inject to Device**. ByeTunes will:
+
+    1. Establish (or reuse) a connection to the device via the pairing file.
+    2. Copy each audio file to `/iTunes_Control/Music/F00/` over AFC.
+    3. Write a new row for each song into `MediaLibrary.sqlitedb`, including store IDs, artwork token, and lyrics if available.
+    4. Send a sync-finished notification so Apple Music picks up the changes.
+
+    A progress bar fills as each song is processed. The counter shows **Injecting N/Total** so you can track large batches.
+  </Step>
+  <Step title="Open Apple Music">
+    When injection finishes you'll see an **Injection Complete** toast. Open Apple Music — your songs should appear immediately. If they don't, force-quit Music and reopen it.
+  </Step>
+</Steps>
+
+## Auto-inject from other apps
+
+You can share an audio file directly to ByeTunes from any other app (Files, a download manager, a browser, etc.) using the iOS share sheet. ByeTunes will:
+
+1. Receive the file via the `onOpenURL` handler.
+2. Extract metadata and add the song to the queue.
+3. **If your device is already connected**, inject the song automatically without any further input from you.
+
+If the device is not connected when the file arrives, it is added to the queue so you can inject it manually later.
+
+<Note>
+  Auto-inject runs on a single song at a time. If multiple files are shared at once they are each processed individually in sequence.
+</Note>
+
+## Skipped songs in batch injection
+
+When injecting a large batch, ByeTunes skips any song whose title **or** artist is still "Unknown". This prevents artwork from being associated with the wrong track in the media database.
+
+<Warning>
+  Songs with unknown metadata are skipped in batch injection to avoid artwork mix-ups. Tap the song row to open **Edit Metadata** and fill in the correct title and artist, then inject that song individually.
+</Warning>
+
+## Important notes before injecting
+
+<Warning>
+  Always create a database snapshot in **Settings → Backup & Restore** before injecting new songs, especially for large batches. Injection modifies `MediaLibrary.sqlitedb` directly and cannot be undone without a backup.
+</Warning>
+
+<Tip>
+  Close Apple Music before tapping **Inject to Device**. ByeTunes displays an orange banner as a reminder when songs are in the queue. On supported iOS versions the app can terminate Music automatically — enable **Kill Music Before Inject** in Settings to turn this on.
+</Tip>
+
+## Signed-app note (AltStore / Signulous)
+
+When ByeTunes is installed via a signing service, the Files picker uses `asCopy: true` so the app receives a full copy of the file rather than a security-scoped reference. This prevents crashes that can occur when the sandbox releases a reference-based URL too early.
+
+<CardGroup cols={2}>
+  <Card title="Download" href="/features/download">
+    Find and download songs from Apple Music or iTunes+Deezer directly inside ByeTunes.
+  </Card>
+  <Card title="Metadata" href="/features/metadata">
+    Learn how ByeTunes reads, fetches, and edits song metadata before injection.
+  </Card>
+  <Card title="Lyrics" href="/features/lyrics">
+    Auto-fetch and manually search lyrics from LRCLIB, Musixmatch, and NetEase.
+  </Card>
+  <Card title="Backup & Restore" href="/settings/backup-restore">
+    Protect your library with database snapshots before making changes.
+  </Card>
+</CardGroup>

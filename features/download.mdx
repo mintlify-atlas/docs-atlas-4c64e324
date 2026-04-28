@@ -1,0 +1,101 @@
+---
+title: "Download Songs from Apple Music and Deezer"
+description: "Search Apple Music or iTunes+Deezer, preview tracks, and download songs directly into ByeTunes' inject queue without leaving the app."
+---
+
+The **Download** tab gives you a built-in search-and-download workflow so you can find music, queue it, and have it ready to inject — all without leaving ByeTunes. You can search by name, paste an Apple Music link, or browse albums and playlists to cherry-pick tracks.
+
+## Choosing a search provider
+
+ByeTunes supports two search providers, selectable from **Settings → Download Settings**:
+
+- **Apple Music** — searches the Apple Music catalog and resolves download links through the configured server. Supports direct link pasting.
+- **iTunes + Deezer** — searches the iTunes Store and Deezer in parallel, useful when Apple Music metadata differs from what you need.
+
+The active provider is shown in the search bar placeholder text.
+
+## Searching for music
+
+<Steps>
+  <Step title="Open the Download tab">
+    Tap **Download** in the tab bar. You'll see a search field at the top and three result tabs beneath it: **Songs**, **Albums**, and **Playlists**.
+  </Step>
+  <Step title="Type a query or paste a link">
+    Enter a song name, artist, or album title and tap **Search** on the keyboard. For Apple Music, you can also paste an Apple Music URL directly into the search field — ByeTunes will resolve it to the matching track, album, or playlist automatically.
+  </Step>
+  <Step title="Browse the results">
+    Results are grouped across three tabs:
+
+    - **Songs** — individual tracks with artwork, artist, and album.
+    - **Albums** — grouped releases; tap an album to see its track list.
+    - **Playlists** — curated lists; tap a playlist to see its songs.
+
+    Each tab shows a count summary in the header (e.g. `12 songs • 3 albums • 1 playlist`). Use **Load More** at the bottom of any list to fetch additional pages.
+  </Step>
+</Steps>
+
+## Previewing a track
+
+Every song row has a **play/pause** button to the left of the download button. Tapping it streams a 30-second preview so you can confirm you have the right version before downloading. Only one preview plays at a time; tapping another track stops the current one.
+
+## Downloading a song
+
+<Steps>
+  <Step title="Tap the download icon">
+    On a song row, tap the **arrow-down circle** icon on the right. The icon changes to an orange clock to indicate the track is **queued**.
+  </Step>
+  <Step title="Monitor queue progress">
+    A **queue indicator** appears in the top-right corner of the Download tab showing current progress (e.g. `2/5`). Tap it to open the **Download Queue** sheet for a detailed breakdown of every item, its status, and any errors.
+  </Step>
+  <Step title="Song moves to Music queue">
+    When a download finishes, the song is automatically added to the **Music** tab queue with metadata and artwork already applied. Switch to the Music tab and tap **Inject to Device** whenever you're ready.
+  </Step>
+</Steps>
+
+## Downloading albums and playlists
+
+Tapping an album or playlist row (or its icon) opens a **track selection sheet**:
+
+- All tracks are pre-selected by default. Tap individual rows to toggle selection, or use **Select All** / **Clear All**.
+- Tap **Download Selected** to queue only the chosen tracks.
+- Tap **Download All** to queue every track in the album or playlist without reviewing individual selections.
+
+A counter in the sheet header shows how many tracks are selected out of the total (e.g. `8 of 12 selected`).
+
+## Retrying failed downloads
+
+If a download fails, the icon changes to a red **retry arrow**. Tap it to re-queue the track immediately. For albums, the same retry icon appears on the album row and re-queues all failed tracks at once.
+
+## Download settings
+
+Configure download behavior in **Settings → Download Settings**:
+
+| Setting | Description |
+|---------|-------------|
+| **Quality** | Target audio quality (where supported by the server). |
+| **Server** | Auto, Yoinkify, HiFi One, or HiFi Two. Auto selects the fastest available. |
+| **Download Folder** | Where downloaded files are saved on-device before injection. |
+| **Keep Downloaded Songs** | Retain the local file after injection instead of deleting it. |
+
+<Tip>
+  If a download consistently fails on one server, switch to a different server in **Settings → Download Settings**. The Auto option tries each server in order of reliability.
+</Tip>
+
+<Note>
+  Downloaded songs go straight into the Music tab inject queue. You don't need to manually add them — just switch to the Music tab and inject when ready.
+</Note>
+
+<CardGroup cols={2}>
+  <Card title="Music Injection" href="/features/music-injection">
+    Inject queued songs into your Apple Music library.
+  </Card>
+  <Card title="Metadata" href="/features/metadata">
+    See how metadata is fetched and edited for downloaded tracks.
+  </Card>
+  <Card title="Download Settings" href="/settings/download-settings">
+    Configure quality, server selection, and save location.
+  </Card>
+  <Card title="Lyrics" href="/features/lyrics">
+    Auto-fetch lyrics for downloaded tracks before injection.
+  </Card>
+</CardGroup>

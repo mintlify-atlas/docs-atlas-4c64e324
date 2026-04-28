@@ -1,0 +1,73 @@
+---
+title: "What is ByeTunes? iTunes-free music for iOS"
+description: "ByeTunes is a sideloaded iOS app that writes music directly to your Apple Music library by talking to the iOS media database — no Mac required after setup."
+---
+
+ByeTunes is a native iOS app for anyone tired of relying on iTunes or Finder to manage their music. Instead of syncing through a computer, ByeTunes communicates directly with the iOS media database over a local VPN tunnel, letting you add songs from your iPhone itself — no cable, no desktop app, no sync cycle.
+
+## Who it's for
+
+ByeTunes is built for people who want full control over their Apple Music library without being locked into Apple's sync workflow. If you have audio files you want to play natively in Apple Music — whether that's lossless FLAC rips, MP3 downloads, or personal recordings — ByeTunes gets them there without a computer in the loop.
+
+## Key features
+
+<CardGroup cols={2}>
+  <Card title="Music injection" icon="music" href="/features/music-injection">
+    Add MP3, M4A, FLAC, WAV, and AIFF files directly to your Apple Music library. Songs appear immediately after injection.
+  </Card>
+  <Card title="Automatic metadata" icon="tag" href="/features/metadata">
+    Artwork, artist info, and album data are fetched automatically from Apple Music and Deezer so your library stays clean.
+  </Card>
+  <Card title="Lyrics support" icon="align-left" href="/features/lyrics">
+    Pull synced and unsynced lyrics from LRCLIB, Musixmatch, and NetEase and attach them to your tracks.
+  </Card>
+  <Card title="Playlist management" icon="list-music" href="/features/playlists">
+    Create and manage playlists on your device without touching a computer.
+  </Card>
+  <Card title="In-app downloads" icon="arrow-down-circle" href="/features/download">
+    Search Apple Music and download tracks directly inside ByeTunes.
+  </Card>
+  <Card title="Backup and restore" icon="database" href="/settings/backup-restore">
+    Snapshot your media library before making changes so you can always roll back.
+  </Card>
+</CardGroup>
+
+## Supported formats
+
+ByeTunes accepts the following audio formats for music injection:
+
+| Type | Formats |
+|------|---------|
+| Music | MP3, M4A, FLAC, WAV, AIFF |
+| Ringtones | M4R |
+
+## Requirements
+
+- **iOS 16.0 or later** — ByeTunes will not run on earlier versions.
+- **LocalDevVPN** — required on the device to establish the local tunnel ByeTunes uses to connect.
+- **A pairing file** — generated once from your computer using [idevice_pair](https://github.com/jkcoxson/idevice_pair).
+
+<Note>
+  iOS 26.4 and later require an RP Pairing File rather than a standard pairing file. If you update your device to iOS 26.4+, ByeTunes will prompt you to re-import the new file. See the [iOS 26.4+ RP Pairing guide](/setup/ios264-rp-pairing) for details.
+</Note>
+
+## How it works under the hood
+
+ByeTunes uses the `idevice` library (a `libimobiledevice` alternative) to communicate with the iOS file system over a local loopback connection provided by LocalDevVPN. When you inject a song, ByeTunes:
+
+1. Copies the audio file into the device's iTunes Control folder via AFC
+2. Writes a correctly structured entry to the iOS media database (`MediaLibrary.sqlitedb`)
+3. Triggers a media library notification so Apple Music picks up the new tracks immediately
+
+No server is involved, and no data leaves your device.
+
+## Ready to get started?
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Install ByeTunes and inject your first song in minutes.
+  </Card>
+  <Card title="Installation" icon="download" href="/installation">
+    Learn how to sideload ByeTunes using AltStore, Signulous, or Sideloadly.
+  </Card>
+</CardGroup>

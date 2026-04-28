@@ -1,0 +1,92 @@
+---
+title: "Back Up and Restore Your Apple Music Library in ByeTunes"
+description: "How to create and restore database snapshots in ByeTunes, including Full Backup mode for recovering songs deleted by an external sync."
+---
+
+Before making any significant changes to your library — injecting a large batch of songs, deleting tracks, or restructuring playlists — you should create a backup. ByeTunes snapshots include the `MediaLibrary.sqlitedb` database (plus its WAL and SHM journal files) and `Ringtones.plist`. With **Full Backup** enabled, ByeTunes also saves a complete copy of all audio files, giving you a recovery path even if an external sync removes songs from device storage.
+
+Backups are stored in a hidden `.db_snapshots` folder inside the ByeTunes app container. Any older snapshots in the legacy `db_snapshots` folder are migrated automatically the first time you open the app after updating.
+
+## Backup modes
+
+| Mode | What is saved | Space used | Restores deleted audio files |
+|------|---------------|------------|------------------------------|
+| Database-only (default) | `MediaLibrary.sqlitedb` + WAL/SHM + `Ringtones.plist` | Small | No |
+| Full Backup | Database files + all music audio files | Large | Yes |
+
+Use **Database-only** for quick, routine snapshots before normal injections. Use **Full Backup** before a PC sync or any operation that could delete files from device storage, since a database-only backup cannot recover audio that has been physically removed from the device.
+
+<Warning>
+Always create a backup before using **Delete Music Library** in the Danger Zone. A database-only backup is sufficient if you plan to re-inject all your songs. Use Full Backup if you cannot afford to lose the audio files.
+</Warning>
+
+## Creating a backup
+
+<Steps>
+  <Step title="Connect your device">
+    Open ByeTunes and confirm the status indicator shows **Connected**. The backup buttons are disabled when the device is not reachable.
+  </Step>
+
+  <Step title="Choose Full Backup (optional)">
+    In **Settings > Backup & Restore**, toggle **Full Backup** on if you want audio files included. Leave it off for a faster, smaller database-only snapshot.
+  </Step>
+
+  <Step title="Tap Create Snapshot/Backup">
+    Tap the **Create Snapshot/Backup** button. A progress popup appears showing each step: preparing, backing up database files, indexing music, backing up artwork, and (if Full Backup is on) copying all iTunes/Music folder contents.
+  </Step>
+
+  <Step title="Wait for completion">
+    Full backups can take several minutes depending on library size. The popup message updates in real time. Do not close the app during this process.
+  </Step>
+
+  <Step title="Verify the Last Backup row">
+    After the backup finishes, the **Last Backup** row at the bottom of the section shows the song count and timestamp of the snapshot just created.
+  </Step>
+</Steps>
+
+<Note>
+Only one snapshot is kept at a time. Creating a new backup replaces the previous one. If you need to preserve multiple restore points, export your database first using **Settings > Debug > Export Database**.
+</Note>
+
+## Restoring a backup
+
+<Steps>
+  <Step title="Connect your device">
+    Confirm the device is connected and the status shows **Connected** before proceeding.
+  </Step>
+
+  <Step title="Tap Restore Snapshot/Backup">
+    In **Settings > Backup & Restore**, tap **Restore Snapshot/Backup**. ByeTunes finds the most recent snapshot automatically.
+  </Step>
+
+  <Step title="Monitor the progress popup">
+    A progress popup walks through: finding the backup, uploading the database, swapping the files, and (for full backups) restoring all audio files. For a full backup, this can take a while.
+  </Step>
+
+  <Step title="Restart the Music app">
+    Once the restore is complete, force-quit and reopen the Music app on your iPhone to reload the restored library.
+  </Step>
+</Steps>
+
+<Tip>
+If you restore a Full Backup, ByeTunes detects the backup type automatically — even if the **Full Backup** toggle is currently off — and performs a full restore that brings back all the audio files.
+</Tip>
+
+## Reading the Last Backup row
+
+The **Last Backup** row displays the song count and date/time of the most recent snapshot. If no backup has been created yet, it shows "No backup yet". This is a quick way to confirm when you last protected your library.
+
+<CardGroup cols={2}>
+  <Card title="Music Injection" href="/features/music-injection">
+    Inject songs into Apple Music — always back up first for large batches.
+  </Card>
+  <Card title="Artwork Repair" href="/settings/artwork-repair">
+    Fix artwork display issues on iOS 26.4 after restoring a backup.
+  </Card>
+  <Card title="Debug Logs" href="/troubleshooting/debug-logs">
+    Export the database for manual inspection or sharing with support.
+  </Card>
+  <Card title="Common Issues" href="/troubleshooting/common-issues">
+    Troubleshoot problems that may require a library restore.
+  </Card>
+</CardGroup>

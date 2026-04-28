@@ -1,0 +1,53 @@
+---
+title: "Open and Build ByeTunes in Xcode"
+description: "Open MusicManager.xcodeproj, verify the idevice link phase, set your development team, and build ByeTunes onto a connected iOS device using Xcode."
+---
+
+Once you have compiled `idevice` and placed `libidevice_ffi.a` and `idevice.h` in the `MusicManager/` directory, you are ready to open the project in Xcode and run it on your device. This page walks you through project configuration, code signing, and the final build.
+
+<Warning>
+  ByeTunes will **not compile** unless `libidevice_ffi.a` and `idevice.h` are present in `MusicManager/` and the library is listed under **Build Phases > Link Binary With Libraries**. Complete the [idevice setup](/build/idevice-setup) steps before continuing.
+</Warning>
+
+<Steps>
+  <Step title="Open the project in Xcode">
+    Double-click `MusicManager.xcodeproj` in the ByeTunes repository root, or open it from Xcode's **File > Open** dialog. Xcode will index the project and resolve any local package references.
+  </Step>
+
+  <Step title="Verify libidevice_ffi.a is linked">
+    Select the **MusicManager** target in the project navigator, go to the **Build Phases** tab, and expand **Link Binary With Libraries**. Confirm that `libidevice_ffi.a` is listed.
+
+    If it is missing, click **+**, choose **Add Other…**, and navigate to `MusicManager/libidevice_ffi.a`.
+  </Step>
+
+  <Step title="Configure a development team">
+    Select the **MusicManager** target, go to **Signing & Capabilities**, and set your **Team** to a valid Apple developer account. You can use a free account, but free accounts cannot use certain entitlements and have a 7-day certificate expiry.
+
+    <Note>
+      ByeTunes uses the app group identifier `group.com.edualexxis.MusicManager` for shared container storage (pairing files, database snapshots, and downloaded songs). This identifier is hardcoded in the entitlements file and in `DeviceManager.appGroupID`. If you change the bundle identifier, you must also update the app group ID in both the entitlements and the source, or the app will fall back to the documents directory for all persistent storage.
+    </Note>
+  </Step>
+
+  <Step title="Select your iOS device as the build target">
+    Connect your iOS device (running iOS 16.0 or later) via USB or ensure it is on the same network for wireless debugging. Select it from the **run destination** picker in the Xcode toolbar.
+  </Step>
+
+  <Step title="Build and run">
+    Press **Cmd + R** (or click the **Run** button) to build the project and install it on your device. Xcode will compile the Swift sources, link `libidevice_ffi.a`, and install the app.
+
+    On the first launch, ByeTunes will display an onboarding screen prompting you to import a pairing file. Refer to [pairing file setup](/setup/pairing-file) to generate and import one.
+  </Step>
+</Steps>
+
+## Build troubleshooting
+
+| Symptom | Likely cause |
+|---|---|
+| `ld: library not found for -lidevice_ffi` | `libidevice_ffi.a` is not added to **Link Binary With Libraries** |
+| `'idevice.h' file not found` | `idevice.h` is missing from `MusicManager/` or the bridging header path is wrong |
+| Code signing error | No development team selected, or the app group entitlement does not match your provisioning profile |
+| App crashes on launch (container nil) | App group ID mismatch between entitlements and source code |
+
+## Next steps
+
+For a deeper understanding of how the app works internally, see the [Architecture overview](/build/architecture). To understand the database ByeTunes writes to, see the [Database schema reference](/build/database-schema).

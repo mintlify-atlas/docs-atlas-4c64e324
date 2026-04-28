@@ -1,0 +1,99 @@
+---
+title: "Song Metadata: Auto-Fetch, Edit, and Store IDs"
+description: "Understand how ByeTunes reads embedded tags, auto-fetches rich metadata from Apple Music and Deezer, and lets you manually edit every field."
+---
+
+Accurate metadata is what makes songs appear correctly in Apple Music — right artwork, right artist, right album grouping. ByeTunes reads tags embedded directly in your audio files and can enrich them automatically from Apple Music or Deezer before injection.
+
+## How ByeTunes reads embedded tags
+
+When you add a file, `SongMetadata.fromURL()` uses AVFoundation to parse the file's native tag format:
+
+- **MP3** — ID3v2 frames (title `TIT2`, artist `TPE1`, album `TALB`, track `TRCK`, disc `TPOS`, cover `APIC`, lyrics `USLT`, etc.)
+- **M4A** — iTunes atoms (`©nam`, `©ART`, `©alb`, `trkn`, `disk`, `covr`, `©lyr`, and Apple Store IDs: `cnID`, `atID`, `plID`, `sfID`, `geID`, `rtng`, `xid`)
+- **FLAC** — Vorbis comments (`TITLE`, `ARTIST`, `ALBUM`, `TRACKNUMBER`, `DISCNUMBER`, `DATE`, `LYRICS`, and an embedded `PICTURE` block) via a native FLAC parser as a fallback when AVFoundation can't read the block type
+
+If a tag is missing, ByeTunes falls back to the filename. Patterns like `Artist - Title.mp3` or `01 - Artist - Title.flac` are parsed automatically to pre-fill fields.
+
+## Auto-fetching metadata
+
+You can configure the metadata source in **Settings** under the **Metadata Source** option. The available modes are:
+
+| Source | What it fetches |
+|--------|-----------------|
+| **Local** | Uses only the tags embedded in the file. No network request. |
+| **Apple Music** | Fetches rich metadata including store IDs, Dolby Atmos / spatial audio traits, artwork background colors, and Mastered for iTunes flags. |
+| **Deezer** | Fetches title, artist, album, year, genre, and high-resolution artwork from Deezer. Used as a fallback when Apple Music has no match. |
+| **iTunes** | Fetches basic catalog data (title, artist, album, year, artwork) from the iTunes Store Search API. |
+
+When **Auto-Fetch Metadata** is enabled, ByeTunes queries the selected source automatically as each song is added to the queue.
+
+<Note>
+  Apple Music rich metadata (`richAppleMetadataFetched`) unlocks the most complete injection: it populates `storeId`, `artistId`, `playlistId`, `genreStoreId`, `storefrontId`, artwork color analysis, and audio-trait flags. These fields are used to enable proper catalog matching inside Apple Music on your device.
+</Note>
+
+## The iTunes search sheet
+
+If the auto-fetched metadata is wrong or you want to pick a specific version, tap any song row in the queue to open **Edit Metadata**, then tap **Search Metadata**.
+
+The **Select Match** sheet opens and pre-fills the search with the song's current artist and title. You can:
+
+- Switch the active source between **iTunes**, **Deezer**, and **Apple Music** using the menu next to the sheet title.
+- Refine the search query and submit again.
+- Tap any result row to apply it — all fields (title, artist, album, year, genre, artwork, store IDs) are overwritten with the selected match.
+
+## Manual metadata editing
+
+Open **Edit Metadata** by tapping a song row in the Music tab queue. You can edit every field directly:
+
+| Field | Notes |
+|-------|-------|
+| **Title** | Displayed in Apple Music's Now Playing and library. |
+| **Artist** | Used for artist grouping in the library. |
+| **Album** | Groups tracks under an album. |
+| **Genre** | Genre shown in the library. |
+| **Year** | Release year (four-digit). |
+| **Track Number** | Track position within the album. |
+| **Explicit** | Sets the explicit-content flag. |
+| **Artwork** | Tap **Change Artwork** to pick an image from your photo library. The crop editor lets you zoom and position the image before saving. |
+| **Lyrics** | Free-form text field; tap the search icon to open the Lyrics search sheet. |
+
+Tap **Save** to apply your edits; tap **Cancel** to discard them.
+
+## Artwork storage
+
+When ByeTunes injects a song, it writes the artwork file to `/iTunes_Control/iTunes/Artwork/Originals/` on the device. The artwork token stored in `MediaLibrary.sqlitedb` is the song's `item_pid` (a random 64-bit integer) converted to a string. That token is then SHA1-hashed to derive the on-disk path: the first two hex characters become the subdirectory name and the remaining characters become the filename under the Originals folder. Apple Music reads this token from `MediaLibrary.sqlitedb` to locate and display the correct cover art.
+
+## Store IDs and Apple Music catalog matching
+
+For M4A files purchased or downloaded from Apple Music, ByeTunes preserves the following store IDs extracted from iTunes atoms:
+
+| Atom | Field | Purpose |
+|------|-------|---------|
+| `cnID` | `storeId` | Track's catalog ID in the iTunes/Apple Music store. |
+| `atID` | `artistId` | Artist's store ID for artist page linking. |
+| `plID` | `playlistId` | Album's store ID (also used for playlists). |
+| `sfID` | `storefrontId` | Identifies the regional storefront. |
+| `geID` | `genreStoreId` | Genre catalog ID. |
+| `xid` | `xid` | Cross-ID linking the track to subscription metadata. |
+
+These IDs are written into `MediaLibrary.sqlitedb` during injection, allowing Apple Music to recognize the tracks as catalog items rather than local files.
+
+<Tip>
+  If a song shows up with the wrong artwork or no artwork in Apple Music, run **Artwork Repair** from **Settings → Artwork Repair**. It re-links artwork tokens in the database to the correct files.
+</Tip>
+
+<CardGroup cols={2}>
+  <Card title="Lyrics" href="/features/lyrics">
+    Auto-fetch and manually search lyrics for any song before injection.
+  </Card>
+  <Card title="Music Injection" href="/features/music-injection">
+    Inject your fully tagged songs into the Apple Music library.
+  </Card>
+  <Card title="Artwork Repair" href="/settings/artwork-repair">
+    Fix missing or mismatched artwork after injection.
+  </Card>
+  <Card title="Download" href="/features/download">
+    Download songs with metadata already applied from the Download tab.
+  </Card>
+</CardGroup>

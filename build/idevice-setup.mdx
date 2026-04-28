@@ -1,0 +1,85 @@
+---
+title: "Build and Integrate idevice into ByeTunes"
+description: "Compile the idevice Rust library for iOS, place libidevice_ffi.a and idevice.h into the Xcode project, and configure the Swift bridging header for ByeTunes."
+---
+
+ByeTunes relies on `idevice`—a Rust-based alternative to `libimobiledevice` authored by [jkcoxson](https://github.com/jkcoxson/idevice)—to communicate with the iOS filesystem over AFC and the lockdown protocol. Because `libidevice_ffi.a` and `idevice.h` are not bundled in the ByeTunes repository (for licensing and size reasons), you must compile them yourself and add them to the Xcode project before the app will build.
+
+<Warning>
+  The project will **not compile** without `libidevice_ffi.a` and `idevice.h` present in the `MusicManager/` directory. Do not skip this section.
+</Warning>
+
+<Steps>
+  <Step title="Clone the idevice repository">
+    Clone the idevice repository to a convenient location on your Mac:
+
+    ```bash
+    git clone https://github.com/jkcoxson/idevice
+    cd idevice
+    ```
+  </Step>
+
+  <Step title="Set the deployment target">
+    Before building, export the `IPHONEOS_DEPLOYMENT_TARGET` environment variable so that Cargo passes the correct minimum OS version to the Apple linker:
+
+    ```bash
+    export IPHONEOS_DEPLOYMENT_TARGET=16.0
+    ```
+
+    Set this to `16.0` to match ByeTunes's minimum iOS requirement.
+  </Step>
+
+  <Step title="Build the FFI static library">
+    Run the Cargo release build, targeting the 64-bit ARM iOS architecture:
+
+    ```bash
+    cargo build --release --package idevice-ffi --target aarch64-apple-ios
+    ```
+
+    The build will produce two files inside the `idevice` repository:
+
+    - `target/aarch64-apple-ios/release/libidevice_ffi.a` — the static library
+    - `target/aarch64-apple-ios/release/idevice.h` — the C header
+  </Step>
+
+  <Step title="Copy the files into the Xcode project">
+    Copy both files into the `MusicManager/` directory of the ByeTunes repository:
+
+    ```bash
+    cp target/aarch64-apple-ios/release/libidevice_ffi.a /path/to/ByeTunes/MusicManager/
+    cp target/aarch64-apple-ios/release/idevice.h /path/to/ByeTunes/MusicManager/
+    ```
+
+    Replace `/path/to/ByeTunes` with the actual path where you cloned the ByeTunes repository.
+  </Step>
+
+  <Step title="Create the Swift Bridging Header">
+    ByeTunes calls `idevice` functions from Swift using a bridging header. If `MusicManager/Bridging-Header.h` does not already exist, create it with the following content:
+
+    ```c
+    #import "idevice.h"
+    ```
+
+    In your Xcode project settings, make sure **Swift Compiler — General > Objective-C Bridging Header** points to `MusicManager/Bridging-Header.h`.
+  </Step>
+
+  <Step title="Add libidevice_ffi.a to Link Binary With Libraries">
+    In Xcode, open the project navigator and select your target. Go to **Build Phases > Link Binary With Libraries**, click the **+** button, and add `libidevice_ffi.a` from the `MusicManager/` directory.
+
+    <Note>
+      If you dragged the `.a` file into Xcode's project navigator, Xcode may have already offered to add it to the link phase. Double-check that it appears in **Link Binary With Libraries** before building.
+    </Note>
+  </Step>
+</Steps>
+
+## Verification
+
+Once everything is in place your `MusicManager/` directory should contain at minimum:
+
+| File | Purpose |
+|---|---|
+| `libidevice_ffi.a` | Static library linked at build time |
+| `idevice.h` | C header imported via the bridging header |
+| `Bridging-Header.h` | Swift-to-C bridge, imports `idevice.h` |
+
+With these files present you are ready to open the project in Xcode and build. See [Xcode Build](/build/xcode-build) for the next steps.
